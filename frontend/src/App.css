@@ -1,0 +1,87 @@
+.App {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.heading-font {
+  font-family: 'Playfair Display', serif;
+}
+
+.body-font {
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+  background-color: hsl(220, 40%, 15%);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid hsl(220, 40%, 15%);
+}
+
+.btn-primary:hover {
+  background-color: hsl(220, 40%, 20%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: hsl(220, 40%, 15%);
+  padding: 12px 32px;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid hsl(220, 40%, 15%);
+}
+
+.btn-secondary:hover {
+  background-color: hsl(220, 40%, 15%);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.section-padding {
+  padding: 120px 0;
+}
+
+.container-custom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.card-hover {
+  transition: all 0.4s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.text-navy {
+  color: hsl(220, 40%, 15%);
+}
+
+.text-charcoal {
+  color: hsl(0, 0%, 25%);
+}
+
+.text-gold {
+  color: hsl(45, 60%, 55%);
+}
+
+.bg-navy {
+  background-color: hsl(220, 40%, 15%);
+}
+
+.bg-light-grey {
+  background-color: hsl(0, 0%, 96%);
+}
+
+.border-gold {
+  border-color: hsl(45, 60%, 55%);
+}

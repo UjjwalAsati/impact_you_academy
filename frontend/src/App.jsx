@@ -1,0 +1,35 @@
+import "./App.css";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import HomePage from './pages/HomePage';
+import ProgramsPage from './pages/ProgramsPage';
+import CurriculumPage from './pages/CurriculumPage';
+import PracticalTrainingPage from './pages/PracticalTrainingPage';
+import CertificationPage from './pages/CertificationPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+
+function App() {
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/curriculum" element={<CurriculumPage />} />
+          <Route path="/practical-training" element={<PracticalTrainingPage />} />
+          <Route path="/certification" element={<CertificationPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+        <Footer />
+        <Toaster position="top-right" />
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
