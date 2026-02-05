@@ -45,7 +45,7 @@ export const Navbar = () => {
             data-testid="nav-logo-link"
           >
             <img 
-              src="https://customer-assets.emergentagent.com/job_talent-academy-pro/artifacts/5gcxqlzy_logo.jpeg" 
+              src="/logo.jpeg" 
               alt="Impact You Academy" 
               className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
               data-testid="academy-logo"

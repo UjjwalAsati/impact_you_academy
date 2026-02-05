@@ -86,7 +86,7 @@ export default function PaymentPage() {
       {/* Header Section */}
       <section 
         data-testid="payment-header" 
-        className={`bg-gradient-to-br from-navy-dark via-navy to-navy-light py-16 lg:py-20 relative overflow-hidden transition-all duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+        className={`bg-gradient-to-br from-navy-dark via-navy to-navy-light py-16 lg:py-24 lg:py-32 relative overflow-hidden transition-all duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
       >
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>

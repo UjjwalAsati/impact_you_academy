@@ -97,7 +97,7 @@ export default function ContactPage() {
   return (
     <div data-testid="contact-page" className="min-h-screen">
       {/* Header Section */}
-      <section data-testid="contact-header" className="bg-gradient-to-br from-slate-50 to-white py-20">
+      <section data-testid="contact-header" className="bg-gradient-to-br from-slate-50 to-white py-24 lg:py-32">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl lg:text-5xl font-bold text-navy mb-6 heading-font">
