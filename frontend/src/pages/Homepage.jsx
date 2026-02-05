@@ -176,20 +176,23 @@ export default function HomePage() {
       </section>
 
       {/* Call to Action Section */}
-      <section data-testid="cta-section" className="section-padding bg-navy text-white">
+     <section
+        data-testid="cta-section"
+        className="section-padding bg-light-grey"
+      >
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6 heading-font">
+            <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6 heading-font">
               Begin Your Professional Journey
             </h2>
-            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+            <p className="text-base text-charcoal mb-8 leading-relaxed">
               Connect with our program advisors to discuss your career objectives and identify the most suitable training pathway.
             </p>
             <Link to="/contact">
-              <Button 
+              <Button
                 data-testid="cta-consultation-button"
-                size="lg" 
-                className="bg-gold text-navy hover:bg-gold hover:opacity-90 font-semibold px-8 py-6 text-base"
+                size="lg"
+                className="btn-primary px-8 py-6"
               >
                 Schedule Consultation
               </Button>
@@ -197,6 +200,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

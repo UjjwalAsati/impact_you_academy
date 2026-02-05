@@ -14,7 +14,7 @@ export const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             <img 
-              src="https://customer-assets.emergentagent.com/job_talent-academy-pro/artifacts/5gcxqlzy_logo.jpeg" 
+              src="/logo.jpeg" 
               alt="Impact You Academy" 
               className="h-16 w-auto mb-4 rounded-lg"
               data-testid="footer-logo"

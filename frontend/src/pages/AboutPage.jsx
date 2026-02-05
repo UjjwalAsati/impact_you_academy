@@ -194,27 +194,31 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section data-testid="about-cta-section" className="section-padding bg-navy text-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6 heading-font">
-              Learn More About Our Programs
-            </h2>
-            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-              Connect with our team to discuss how our training programs can support your professional development in recruitment and talent acquisition.
-            </p>
-            <Link to="/contact">
-              <Button 
-                data-testid="about-contact-button"
-                size="lg" 
-                className="bg-gold text-navy hover:bg-gold hover:opacity-90 font-semibold px-8 py-6"
-              >
-                Get in Touch
-              </Button>
-            </Link>
+      <section
+          data-testid="about-cta-section"
+          className="section-padding bg-light-grey"
+        >
+          <div className="container-custom">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6 heading-font">
+                Learn More About Our Programs
+              </h2>
+              <p className="text-base text-charcoal mb-8 leading-relaxed">
+                Connect with our team to discuss how our training programs can support your professional development in recruitment and talent acquisition.
+              </p>
+              <Link to="/contact">
+                <Button
+                  data-testid="about-contact-button"
+                  size="lg"
+                  className="btn-primary px-8 py-6"
+                >
+                  Get in Touch
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
     </div>
   );
 }
