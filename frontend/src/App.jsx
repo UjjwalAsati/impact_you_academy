@@ -10,7 +10,7 @@ import PracticalTrainingPage from './pages/PracticalTrainingPage';
 import CertificationPage from './pages/CertificationPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-
+import PaymentPage from './pages/PaymentPage';
 function App() {
   return (
     <div className="App">
@@ -24,6 +24,7 @@ function App() {
           <Route path="/certification" element={<CertificationPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/payment" element={<PaymentPage/>}/>
         </Routes>
         <Footer />
         <Toaster position="top-right" />
