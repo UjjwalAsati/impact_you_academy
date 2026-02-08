@@ -31,7 +31,7 @@ function App() {
           <Route path="/certification" element={<CertificationPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/payment" element={<PaymentPage/>}/>
+          <Route path="/payment" element={<PaymentPage />} />
 
                   {/* USER PROTECTED */}
           <Route
