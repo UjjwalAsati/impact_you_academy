@@ -15,6 +15,10 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminRoute from "./routes/AdminRoute";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPrograms from "./pages/admin/AdminPrograms";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminEnrollments from "./pages/admin/AdminEnrollments";
 
 function App() {
   return (
@@ -48,12 +52,15 @@ function App() {
             path="/admin"
             element={
               <AdminRoute>
-                <div className="p-10 text-xl font-bold">
-                  Admin Dashboard (Coming Soon)
-                </div>
+                <AdminDashboard />
               </AdminRoute>
             }
-          />
+          >
+            <Route path="programs" element={<AdminPrograms />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="enrollments" element={<AdminEnrollments />} />
+          </Route>
+
 
         </Routes>
         <Footer />
