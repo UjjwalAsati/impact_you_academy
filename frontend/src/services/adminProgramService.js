@@ -31,3 +31,22 @@ export const createProgram = async (programData, token) => {
 
   return data;
 };
+export const toggleProgramStatus = async (id, token) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/programs/${id}/toggle`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update program status");
+  }
+
+  return data;
+};

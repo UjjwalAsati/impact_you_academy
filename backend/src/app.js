@@ -30,8 +30,8 @@ const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/programs', programRoutes);   // PUBLIC
-app.use('/api/inquiries', inquiryRoutes);  // mixed
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/inquiries', inquiryRoutes);  // mixed
 app.use('/api/admin', adminRoutes);
 
 

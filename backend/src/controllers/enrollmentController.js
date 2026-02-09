@@ -86,3 +86,29 @@ exports.updateEnrollmentStatus = async (req, res) => {
     enrollment
   });
 };
+// ADMIN: Update enrollment status
+exports.updateEnrollmentStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!["pending", "active", "completed"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const enrollment = await Enrollment.findById(req.params.id);
+
+    if (!enrollment) {
+      return res.status(404).json({ message: "Enrollment not found" });
+    }
+
+    enrollment.status = status;
+    await enrollment.save();
+
+    res.json({
+      message: "Enrollment status updated",
+      enrollment
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update enrollment status" });
+  }
+};

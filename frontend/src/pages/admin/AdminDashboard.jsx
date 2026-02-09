@@ -48,6 +48,18 @@ const AdminDashboard = () => {
           >
             Enrollments
           </NavLink>
+          <NavLink
+            to="/admin/inquiries"
+            className={({ isActive }) =>
+              `block px-4 py-2 rounded-lg font-semibold transition ${
+                isActive
+                  ? "bg-navy text-white"
+                  : "text-charcoal hover:bg-navy/5"
+              }`
+            }
+          >
+            Inquiries
+          </NavLink>
         </nav>
       </aside>
 

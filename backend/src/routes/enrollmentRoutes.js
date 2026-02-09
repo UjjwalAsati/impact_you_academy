@@ -14,6 +14,6 @@ router.get('/my', protect, enrollmentController.getMyEnrollments);
  * ADMIN routes
  */
 router.get('/', protect, adminOnly, enrollmentController.getAllEnrollments);
-router.patch('/:id', protect, adminOnly, enrollmentController.updateEnrollmentStatus);
+router.patch('/:id/status', protect, adminOnly, enrollmentController.updateEnrollmentStatus);
 
 module.exports = router;

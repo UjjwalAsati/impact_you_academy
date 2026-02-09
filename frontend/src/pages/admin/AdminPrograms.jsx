@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchPrograms, createProgram } from "../../services/adminProgramService";
+import { fetchPrograms, createProgram,toggleProgramStatus } from "../../services/adminProgramService";
 import { useAuth } from "../../context/AuthContext";
 
 const AdminPrograms = () => {
@@ -149,19 +149,21 @@ const AdminPrograms = () => {
               <th className="px-6 py-4 font-semibold">Duration</th>
               <th className="px-6 py-4 font-semibold">Price</th>
               <th className="px-6 py-4 font-semibold">Status</th>
+              <th className="px-6 py-4 font-semibold">Action</th>
+
             </tr>
           </thead>
 
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="4" className="px-6 py-6 text-center">
+                <td colSpan="5" className="px-6 py-6 text-center">
                   Loading programs...
                 </td>
               </tr>
             ) : programs.length === 0 ? (
               <tr>
-                <td colSpan="4" className="px-6 py-6 text-center">
+                <td colSpan="5" className="px-6 py-6 text-center">
                   No programs found
                 </td>
               </tr>
@@ -177,9 +179,25 @@ const AdminPrograms = () => {
                   <td className="px-6 py-4">
                     ₹{program.price}
                   </td>
+
                   <td className="px-6 py-4">
                     {program.isActive ? "Active" : "Inactive"}
                   </td>
+                  <td className="px-6 py-4">
+                  <button
+                    onClick={async () => {
+                      await toggleProgramStatus(program._id, token);
+                      loadPrograms();
+                    }}
+                    className={`px-4 py-1 text-sm rounded-lg ${
+                      program.isActive
+                        ? "bg-red-500 text-white"
+                        : "bg-green-500 text-white"
+                    }`}
+                  >
+                    {program.isActive ? "Deactivate" : "Activate"}
+                  </button>
+                </td>
                 </tr>
               ))
             )}

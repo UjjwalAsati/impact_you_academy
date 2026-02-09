@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const inquirySchema = new mongoose.Schema(
   {
@@ -8,11 +8,11 @@ const inquirySchema = new mongoose.Schema(
     message: String,
     status: {
       type: String,
-      enum: ['new', 'contacted', 'closed'],
-      default: 'new'
+      enum: ["new", "contacted", "closed"],
+      default: "new"
     }
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Inquiry', inquirySchema);
+module.exports = mongoose.model("Inquiry", inquirySchema);

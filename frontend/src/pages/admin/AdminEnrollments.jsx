@@ -59,6 +59,7 @@ const AdminEnrollments = () => {
               <th className="px-6 py-4 font-semibold">User</th>
               <th className="px-6 py-4 font-semibold">Program</th>
               <th className="px-6 py-4 font-semibold">Status</th>
+              <th className="px-6 py-4 font-semibold">Action</th>
               <th className="px-6 py-4 font-semibold">Enrolled On</th>
               <th className="px-6 py-4 font-semibold">Days Left</th>
             </tr>
@@ -96,6 +97,25 @@ const AdminEnrollments = () => {
                   <td className="px-6 py-4 capitalize">
                     {enrollment.status}
                   </td>
+
+                  <td className="px-6 py-4">
+                    {enrollment.status !== "completed" && (
+                      <button
+                        onClick={async () => {
+                          await updateEnrollmentStatus(
+                            enrollment._id,
+                            enrollment.status === "pending" ? "active" : "completed",
+                            token
+                          );
+                          loadEnrollments();
+                        }}
+                        className="px-4 py-1 text-sm rounded-lg bg-navy text-white hover:bg-navy/90"
+                      >
+                        Mark {enrollment.status === "pending" ? "Active" : "Completed"}
+                      </button>
+                    )}
+                  </td>
+
 
                   <td className="px-6 py-4">
                     {new Date(enrollment.createdAt).toLocaleDateString()}

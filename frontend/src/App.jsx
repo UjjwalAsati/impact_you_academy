@@ -19,6 +19,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPrograms from "./pages/admin/AdminPrograms";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEnrollments from "./pages/admin/AdminEnrollments";
+import AdminHome from "./pages/admin/AdminHome";
+import AdminInquiries from "./pages/admin/AdminInquiries";
 
 function App() {
   return (
@@ -56,11 +58,13 @@ function App() {
               </AdminRoute>
             }
           >
+            <Route index element={<AdminHome />} />
             <Route path="programs" element={<AdminPrograms />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="enrollments" element={<AdminEnrollments />} />
-          </Route>
+            <Route path="inquiries" element={<AdminInquiries />} />
 
+          </Route>
 
         </Routes>
         <Footer />

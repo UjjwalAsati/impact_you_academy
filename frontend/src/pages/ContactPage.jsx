@@ -1,3 +1,5 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 import React, { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
@@ -68,31 +70,53 @@ export default function ContactPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
-      return;
+  if (!validateForm()) {
+    toast.error('Please fix the errors in the form');
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/inquiries`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: `${formData.programInterest}\n\n${formData.message}`
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit inquiry");
     }
 
-    setIsSubmitting(true);
+    toast.success("Thank you for your inquiry! We will contact you shortly.");
 
-    // Simulate API call - Replace with actual backend integration
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      toast.success('Thank you for your inquiry! We will contact you shortly.');
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        programInterest: '',
-        message: '',
-      });
-      setIsSubmitting(false);
-    }, 1500);
-  };
+    // Reset form
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      programInterest: "",
+      message: ""
+    });
+  } catch (error) {
+    console.error("Inquiry submit error:", error);
+    toast.error("Failed to submit inquiry. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div data-testid="contact-page" className="min-h-screen">

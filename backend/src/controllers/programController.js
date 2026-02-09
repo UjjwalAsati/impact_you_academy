@@ -38,3 +38,24 @@ exports.createProgram = async (req, res) => {
     return res.status(500).json({ message: "Failed to create program" });
   }
 };
+
+// ADMIN: Toggle program active status
+exports.toggleProgramStatus = async (req, res) => {
+  try {
+    const program = await Program.findById(req.params.id);
+
+    if (!program) {
+      return res.status(404).json({ message: "Program not found" });
+    }
+
+    program.isActive = !program.isActive;
+    await program.save();
+
+    res.json({
+      message: "Program status updated",
+      program
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update program status" });
+  }
+};
