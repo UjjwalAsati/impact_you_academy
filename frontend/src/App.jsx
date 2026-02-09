@@ -21,6 +21,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEnrollments from "./pages/admin/AdminEnrollments";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminInquiries from "./pages/admin/AdminInquiries";
+import UserDashboard from "./pages/dashboard/UserDashboard";
 
 function App() {
   return (
@@ -48,6 +49,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+
 
           {/* ADMIN PROTECTED (placeholder for now) */}
           <Route

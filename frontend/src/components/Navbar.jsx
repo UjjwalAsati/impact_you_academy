@@ -8,7 +8,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
 
   useEffect(() => {
@@ -87,14 +87,23 @@ export const Navbar = () => {
                 />
               </Link>
             ))}
+            {/* User Dashboard Link */}
 
             {/* Admin Link */}
             {isAuthenticated && isAdmin && (
               <Link
-                to="/admin"
-                className="px-4 py-2 text-sm font-semibold text-gold hover:text-gold-light transition"
+              to="/admin"
+              className="px-4 py-2 text-sm font-semibold text-gold hover:text-gold-light transition"
               >
                 Admin
+              </Link>
+            )}
+            {isAuthenticated && !isAdmin && (
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 text-charcoal hover:text-navy"
+              >
+                Dashboard
               </Link>
             )}
           </div>
@@ -170,6 +179,15 @@ export const Navbar = () => {
                 className="block px-4 py-3 font-semibold text-gold"
               >
                 Admin Dashboard
+              </Link>
+            )}
+            {isAuthenticated && !isAdmin && (
+              <Link
+                to="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-3 font-semibold text-navy hover:bg-navy/5 rounded-lg"
+              >
+                Dashboard
               </Link>
             )}
 
