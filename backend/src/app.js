@@ -26,13 +26,14 @@ const programRoutes = require('./routes/programRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const enrollmentRoutes = require('./routes/enrollmentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
+const paymentRoutes = require("./routes/paymentRoutes");
 
 app.use('/api/auth', authRoutes);
 app.use('/api/programs', programRoutes);   // PUBLIC
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/inquiries', inquiryRoutes);  // mixed
 app.use('/api/admin', adminRoutes);
+app.use("/api/payments", paymentRoutes);
 
 
 /* Health check */

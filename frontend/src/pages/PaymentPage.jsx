@@ -5,6 +5,7 @@ import { Card } from "../components/ui/card";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { createPaymentOrder } from "../services/paymentService";
 
 import {
   CreditCard,
@@ -19,11 +20,11 @@ import {
 } from "lucide-react";
 
 export default function PaymentPage() {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  
   const [isVisible, setIsVisible] = useState(false);
 
   const { cartItems, removeFromCart, totalAmount } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,27 +35,6 @@ export default function PaymentPage() {
     setIsVisible(true);
   }, [isAuthenticated, navigate]);
 
-
-  const paymentMethods = [
-    {
-      id: "card",
-      title: "Credit / Debit Card",
-      description: "Visa, Mastercard, Rupay",
-      icon: <CreditCard className="w-6 h-6" />,
-    },
-    {
-      id: "upi",
-      title: "UPI Payment",
-      description: "GPay, PhonePe, Paytm",
-      icon: <Smartphone className="w-6 h-6" />,
-    },
-    {
-      id: "netbanking",
-      title: "Net Banking",
-      description: "All major banks supported",
-      icon: <Building2 className="w-6 h-6" />,
-    },
-  ];
 
   const securityFeatures = [
     { icon: <Shield className="w-5 h-5" />, text: "256-bit SSL Encryption" },
@@ -74,16 +54,41 @@ export default function PaymentPage() {
     );
   }
 const handlePayment = async () => {
-  if (!selectedPaymentMethod) return;
+  try {
+    const program = cartItems[0];
 
-  console.log("Proceeding to payment", {
-    cartItems,
-    totalAmount,
-    paymentMethod: selectedPaymentMethod.id,
-  });
+    const order = await createPaymentOrder(program._id, token);
 
-  // Razorpay integration will come here next
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount * 100,
+      currency: order.currency,
+      name: "Impact You Academy",
+      description: program.title,
+      order_id: order.orderId,
+      prefill: {
+        name: user.name,
+        email: user.email,
+      },
+      theme: {
+        color: "#0F172A",
+      },
+      handler: function (response) {
+        console.log("Payment success:", response);
+        alert("Payment successful! Your enrollment will be activated shortly.");
+        navigate("/dashboard");
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+  } catch (error) {
+    console.error("Payment error:", error);
+    alert("Payment failed. Please try again.");
+  }
 };
+
+
 
   return (
     <div data-testid="payment-page" className="min-h-screen bg-slate-50">
@@ -151,50 +156,17 @@ const handlePayment = async () => {
 
             {/* PAYMENT METHOD */}
             <div className="pt-6">
-              <h2 className="text-xl font-bold text-navy mb-4">
-                Select Payment Method
-              </h2>
+            <Button
+              className="w-full py-6 text-base font-semibold btn-gold"
+              onClick={handlePayment}
+            >
+              <span className="flex items-center justify-center">
+                Pay Securely with Razorpay
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </span>
+            </Button>
+          </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {paymentMethods.map((method) => (
-                  <Card
-                    key={method.id}
-                    className={`p-5 cursor-pointer border-2 text-center ${
-                      selectedPaymentMethod?.id === method.id
-                        ? "border-gold bg-gold/5"
-                        : "border-slate-200"
-                    }`}
-                    onClick={() => setSelectedPaymentMethod(method)}
-                  >
-                    <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-slate-100">
-                      {method.icon}
-                    </div>
-                    <h3 className="text-sm font-semibold text-navy">
-                      {method.title}
-                    </h3>
-                    <p className="text-xs text-charcoal">
-                      {method.description}
-                    </p>
-                  </Card>
-                ))}
-              </div>
-
-              <Button
-                disabled={!selectedPaymentMethod}
-                className={`w-full mt-6 py-6 text-base font-semibold ${
-                  selectedPaymentMethod
-                    ? "btn-gold"
-                    : "bg-slate-200 text-slate-500 cursor-not-allowed"
-                }`}
-                onClick={handlePayment}
-              >
-
-                <span className="flex items-center justify-center">
-                  Proceed to Secure Payment
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </span>
-              </Button>
-            </div>
           </div>
 
           {/* RIGHT: SUMMARY */}
