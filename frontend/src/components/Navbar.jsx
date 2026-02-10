@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, ChevronRight, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Navbar = () => {
@@ -8,12 +8,13 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Trigger effect slightly earlier for smoother feel
+      setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -23,7 +24,7 @@ export const Navbar = () => {
     { path: '/', label: 'Home' },
     { path: '/programs', label: 'Programs' },
     { path: '/curriculum', label: 'Curriculum' },
-    { path: '/practical-training', label: 'Practical Training' },
+    { path: '/practical-training', label: 'Training' }, 
     { path: '/certification', label: 'Certification' },
     { path: '/about', label: 'About' },
     { path: '/contact', label: 'Contact' },
@@ -37,182 +38,209 @@ export const Navbar = () => {
   };
 
   const handleEnrollNow = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else if (isAdmin) {
-      navigate('/admin');
-    } else {
-      navigate('/programs');
-    }
+    if (!isAuthenticated) navigate('/login');
+    else if (isAdmin) navigate('/admin');
+    else navigate('/programs');
   };
 
   return (
     <nav
       data-testid="main-navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-lg shadow-medium'
-          : 'bg-white border-b border-slate-200'
+          ? 'bg-white/80 backdrop-blur-md shadow-sm border-white/20 py-2' // Glass effect on scroll
+          : 'bg-white border-transparent py-4' // Clean whitespace at top
       }`}
     >
-      <div className="container-custom">
-        <div className="flex justify-between items-center h-20">
-
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+      {/* Container limits width to keep items from spacing too far apart */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          
+          {/* --- LEFT: Logo --- */}
+          <Link to="/" className="flex-shrink-0 flex items-center">
             <img
               src="/logo.jpeg"
               alt="Impact You Academy"
-              className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
+              className="h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          {/* --- CENTER: Navigation Links (Desktop) --- */}
+          <div className="hidden lg:flex items-center justify-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 relative group ${
+                className={`relative text-sm font-medium transition-colors duration-200 ${
                   isActive(link.path)
-                    ? 'text-navy'
-                    : 'text-charcoal hover:text-navy'
+                    ? 'text-yellow-600'
+                    : 'text-gray-600 hover:text-yellow-600'
                 }`}
               >
                 {link.label}
-                <span
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-gold to-gold-light transition-all duration-300 ${
-                    isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}
-                />
-              </Link>
-            ))}
-            {/* User Dashboard Link */}
-
-            {/* Admin Link */}
-            {isAuthenticated && isAdmin && (
-              <Link
-              to="/admin"
-              className="px-4 py-2 text-sm font-semibold text-gold hover:text-gold-light transition"
-              >
-                Admin
-              </Link>
-            )}
-            {isAuthenticated && !isAdmin && (
-              <Link
-                to="/dashboard"
-                className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 text-charcoal hover:text-navy"
-              >
-                Dashboard
-              </Link>
-            )}
-          </div>
-
-          {/* Right Side Actions - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <button
-              onClick={handleEnrollNow}
-              className="btn-gold px-6 py-2.5 text-sm"
-            >
-              Enroll Now
-            </button>
-
-            {!isAuthenticated ? (
-              <>
-                <Link to="/login" className="text-sm font-semibold text-navy hover:text-gold">
-                  Login
-                </Link>
-                <Link to="/register">
-                  <button className="border border-navy px-5 py-2 rounded-lg text-sm font-semibold hover:bg-navy hover:text-white transition">
-                    Sign Up
-                  </button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center space-x-2 text-sm font-semibold text-charcoal">
-                  <User size={16} />
-                  <span>{user?.name}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-1 text-sm font-semibold text-red-600 hover:text-red-700"
-                >
-                  <LogOut size={16} />
-                  <span>Logout</span>
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden text-navy p-2 rounded-lg hover:bg-navy/5 transition-colors"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="lg:hidden py-6 space-y-2 border-t border-slate-200 animate-fade-in">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={`block px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 ${
-                  isActive(link.path)
-                    ? 'text-navy bg-navy/5 border-l-4 border-gold'
-                    : 'text-charcoal hover:text-navy hover:bg-navy/5'
-                }`}
-              >
-                {link.label}
+                {/* Subtle animated underline dot for active state */}
+                {isActive(link.path) && (
+                  <span className="absolute -bottom-2 left-1/2 w-1 h-1 bg-yellow-500 rounded-full transform -translate-x-1/2" />
+                )}
               </Link>
             ))}
 
+            {/* RESTORED: Admin Link */}
             {isAuthenticated && isAdmin && (
               <Link
                 to="/admin"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 font-semibold text-gold"
+                className={`relative text-sm font-medium transition-colors duration-200 ${
+                    isActive('/admin') ? 'text-yellow-600' : 'text-gray-600 hover:text-yellow-600'
+                }`}
               >
-                Admin Dashboard
+                Admin Panel
               </Link>
             )}
+
+            {/* RESTORED: Dashboard Link (Missing in new code) */}
             {isAuthenticated && !isAdmin && (
               <Link
                 to="/dashboard"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 font-semibold text-navy hover:bg-navy/5 rounded-lg"
+                className={`relative text-sm font-medium transition-colors duration-200 flex items-center gap-1 ${
+                    isActive('/dashboard') ? 'text-yellow-600' : 'text-gray-600 hover:text-yellow-600'
+                }`}
               >
                 Dashboard
               </Link>
             )}
+          </div>
 
-            <button
-              onClick={() => {
-                handleEnrollNow();
-                setIsOpen(false);
-              }}
-              className="w-full btn-gold mt-4"
-            >
-              Enroll Now
-            </button>
-
+          {/* --- RIGHT: Action Buttons (Desktop) --- */}
+          <div className="hidden lg:flex items-center space-x-6">
             {!isAuthenticated ? (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)}>
-                  <button className="w-full border border-navy text-navy py-2 rounded-lg mt-4">
-                    Login
-                  </button>
+                <Link 
+                  to="/login" 
+                  className="text-sm font-semibold text-gray-700 hover:text-black transition-colors"
+                >
+                  Log In
                 </Link>
-                <Link to="/register" onClick={() => setIsOpen(false)}>
-                  <button className="w-full btn-gold mt-3">
+               
+                <Link to="/register">
+                  <button className="px-5 py-2 text-sm font-semibold text-gray-800 border-2 border-gray-200 rounded-full hover:border-gray-800 hover:bg-gray-800 hover:text-white transition-all duration-300">
                     Sign Up
                   </button>
                 </Link>
+
+                <button
+                  onClick={handleEnrollNow}
+                  className="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-1"
+                >
+                  Enroll Now
+                  <ChevronRight size={16} />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-gray-700">
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-yellow-600">
+                    <User size={18} />
+                  </div>
+                  <span className="text-sm font-medium">{user?.name}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  title="Logout"
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <LogOut size={20} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* --- MOBILE: Toggle Button --- */}
+          <div className="flex items-center lg:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* --- MOBILE MENU (Dropdown) --- */}
+      <div 
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white border-t border-gray-100 ${
+          isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="px-4 pt-2 pb-6 space-y-2 shadow-xl">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                isActive(link.path)
+                  ? 'bg-yellow-50 text-yellow-700'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          {/* RESTORED: Mobile Admin Link */}
+          {isAuthenticated && isAdmin && (
+            <Link
+              to="/admin"
+              onClick={() => setIsOpen(false)}
+              className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                isActive('/admin') ? 'bg-yellow-50 text-yellow-700' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              Admin Panel
+            </Link>
+          )}
+
+          {/* RESTORED: Mobile Dashboard Link */}
+          {isAuthenticated && !isAdmin && (
+            <Link
+              to="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                isActive('/dashboard') ? 'bg-yellow-50 text-yellow-700' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              Dashboard
+            </Link>
+          )}
+          
+          <div className="h-px bg-gray-100 my-4" />
+
+          {/* Mobile Actions */}
+          <div className="px-2 space-y-3">
+            {!isAuthenticated ? (
+              <>
+               <button
+                  onClick={() => {
+                    handleEnrollNow();
+                    setIsOpen(false);
+                  }}
+                  className="w-full py-3 text-center text-white font-bold bg-yellow-500 rounded-lg shadow-md"
+                >
+                  Enroll Now
+                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/login" onClick={() => setIsOpen(false)}>
+                    <button className="w-full py-2.5 text-center font-semibold text-gray-700 bg-gray-50 rounded-lg border border-gray-200">
+                      Log In
+                    </button>
+                  </Link>
+                  <Link to="/register" onClick={() => setIsOpen(false)}>
+                    <button className="w-full py-2.5 text-center font-semibold text-white bg-gray-800 rounded-lg">
+                      Sign Up
+                    </button>
+                  </Link>
+                </div>
               </>
             ) : (
               <button
@@ -220,14 +248,14 @@ export const Navbar = () => {
                   handleLogout();
                   setIsOpen(false);
                 }}
-                className="w-full mt-4 flex items-center justify-center space-x-2 text-red-600 font-semibold"
+                className="w-full flex items-center justify-center gap-2 py-3 text-red-600 font-medium bg-red-50 rounded-lg"
               >
                 <LogOut size={18} />
-                <span>Logout</span>
+                Logout
               </button>
             )}
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );
