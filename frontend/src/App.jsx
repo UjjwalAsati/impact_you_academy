@@ -1,5 +1,6 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route,useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Toaster } from './components/ui/sonner';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -23,10 +24,20 @@ import AdminHome from "./pages/admin/AdminHome";
 import AdminInquiries from "./pages/admin/AdminInquiries";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 
+function ScrollHandler() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
+      <ScrollHandler/>
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
