@@ -62,6 +62,26 @@ const AdminEnrollments = () => {
       </span>
     );
   };
+  const handleStatusUpdate = async (id, currentStatus) => {
+    try {
+      let newStatus;
+
+      if (currentStatus.toLowerCase() === "pending") {
+        newStatus = "active";
+      } else if (currentStatus.toLowerCase() === "active") {
+        newStatus = "completed";
+      } else {
+        return;
+      }
+
+      await updateEnrollmentStatus(id, newStatus, token);
+
+      // Reload enrollments after update
+      loadEnrollments();
+    } catch (err) {
+      console.error("Status update failed:", err);
+    }
+  };
 
   return (
     <div className="space-y-8 pb-10">
@@ -157,15 +177,21 @@ const AdminEnrollments = () => {
                     </td>
 
                     <td className="px-6 py-4 text-right">
-                      {en.status?.toLowerCase() !== "completed" && (
-                        <button className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
-                          Mark{" "}
-                          {en.status?.toLowerCase() === "pending"
-                            ? "Active"
-                            : "Completed"}
-                        </button>
-                      )}
-                    </td>
+                    {en.status?.toLowerCase() !== "completed" && (
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(en._id, en.status)
+                        }
+                        className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        Mark{" "}
+                        {en.status?.toLowerCase() === "pending"
+                          ? "Active"
+                          : "Completed"}
+                      </button>
+                    )}
+                  </td>
+
                   </tr>
                 ))
               )}
