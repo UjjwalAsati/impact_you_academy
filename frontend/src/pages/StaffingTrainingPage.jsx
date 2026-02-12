@@ -18,13 +18,21 @@ import {
   Target,
   X,
   Calendar,
-  IndianRupee
+  IndianRupee,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 export default function StaffingTrainingPage() {
   
   // State for the active modal
   const [selectedProgram, setSelectedProgram] = useState(null);
+  // State for modal accordion
+  const [openModuleIndex, setOpenModuleIndex] = useState(null);
+
+  const toggleModule = (index) => {
+    setOpenModuleIndex(openModuleIndex === index ? null : index);
+  };
 
   // --- INTERNAL ANIMATION STYLES ---
   const animationStyles = `
@@ -63,27 +71,63 @@ export default function StaffingTrainingPage() {
       box-shadow: 0 20px 40px -15px rgba(234, 179, 8, 0.15);
       border-color: rgba(234, 179, 8, 0.4);
     }
+    
+    /* Scrollbar for modal */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
   `;
 
-  // --- 1. REAL CURRICULUM DATA (Based on CSRP PDF) ---
-  const modules = [
-    { id: 1, title: "Staffing Industry Overview", icon: <Users />, topics: ["Indian & Global Landscape", "Perm vs Contract vs Payroll", "Recruiter Ecosystem"] },
-    { id: 2, title: "End-to-End Recruitment", icon: <Layout />, topics: ["JD & Manpower Requisition", "Sourcing to Joining", "Post-Joining Follow-up"] },
-    { id: 3, title: "Sourcing Techniques", icon: <Target />, topics: ["Boolean & LinkedIn Sourcing", "Job Portals Mastery", "Bulk Hiring Methods"] },
-    { id: 4, title: "Screening & Interview Skills", icon: <Phone />, topics: ["Resume Analysis & Red Flags", "Telephonic Screening", "Candidate Evaluation"] },
-    { id: 5, title: "Client Handling", icon: <Briefcase />, topics: ["SLA & TAT Management", "Negotiation & Escalation", "Requirement Gathering"] },
-    { id: 6, title: "Offer & Closure", icon: <CheckCircle2 />, topics: ["CTC Structure & Negotiation", "Counter-Offer Handling", "Offer Rollout"] },
-    { id: 7, title: "Compliance Basics", icon: <ShieldCheck />, topics: ["Labour Laws (PF/ESIC)", "Minimum Wages", "Payroll Basics"] },
-    { id: 8, title: "HR Operations", icon: <Layout />, topics: ["Onboarding Documentation", "Leave & Attendance", "HR MIS & Reporting"] },
-    { id: 9, title: "Recruiter KPIs", icon: <TrendingUp />, topics: ["Productivity Metrics", "Source Performance", "Incentive Structures"] },
-    { id: 10, title: "Staffing Technology", icon: <Zap />, topics: ["ATS & CRM Fundamentals", "Excel Dashboards", "Hiring Automation"] },
-    { id: 11, title: "Professional Skills", icon: <Users />, topics: ["Email & Call Etiquette", "Time & Stress Mgmt", "Ethics & Confidentiality"] },
-    { id: 12, title: "Practical Training", icon: <Briefcase />, topics: ["Live Sourcing Practice", "Mock Interviews", "Role Plays"] },
-    { id: 13, title: "Special Hiring", icon: <Award />, topics: ["IT & Non-IT Hiring", "Campus & Niche Hiring", "Executive Search"] },
-    { id: 14, title: "Certification & Readiness", icon: <Award />, topics: ["Resume Building", "Final Assessment", "Placement Support"] }
+  // --- 1. DETAILED SYLLABUS DATA ---
+
+  const syllabusIndustryReady = [
+    { title: "M1: HR & Staffing Fundamentals", topics: ["Introduction to HR & Staffing", "Generalist vs Recruiter vs Consultant", "Hiring Types: Perm, Contract, Payroll", "Ethical Hiring Basics"] },
+    { title: "M2: Recruitment Process (End-to-End)", topics: ["Step-by-Step Hiring Flow", "Reading JDs & Checklist Creation", "Must-Have vs Good-to-Have Skills", "Offer & Joining Process"] },
+    { title: "M3: Candidate Sourcing Techniques", topics: ["Job Portals & LinkedIn Sourcing", "Boolean Search Basics", "Resume Filtering (Fake vs Genuine)", "Target: Source 20 profiles/day"] },
+    { title: "M4: Screening & Communication", topics: ["Telephonic Screening Format", "Salary & Notice Period Discussion", "Professional Etiquette (Call/Email)", "Mock Screening Calls"] },
+    { title: "M5: Interview Coordination", topics: ["Scheduling & Calendar Management", "Client & Candidate Coordination", "Feedback Follow-up", "Daily Hiring Reports (Trackers)"] },
+    { title: "M6: Offer, Joining & Ops Basics", topics: ["Offer Process & Documents Checklist", "Joining Formalities", "Attendance & Payroll Overview", "Employee Life Cycle Basics"] },
+    { title: "M7: Workplace Readiness", topics: ["Professional Attitude", "Time Management", "Handling Pressure & Targets", "Career Growth Guidance"] }
   ];
 
-  // --- 2. REAL PROGRAM PRODUCTS (Based on PDFs) ---
+  const syllabusCSRP = [
+    { title: "M1: Staffing Industry Overview", topics: ["Indian & Global Staffing Landscape", "Perm vs Contract vs Executive Search", "Recruiter Roles & Ecosystem"] },
+    { title: "M2: End-to-End Recruitment", topics: ["JD Understanding & Manpower Requisition", "Sourcing to Interview Coordination", "Offer Management & Follow-up"] },
+    { title: "M3: Sourcing Techniques", topics: ["Job Portals & Social Platforms", "Boolean Search & LinkedIn Sourcing", "Referrals & Bulk Hiring Methods"] },
+    { title: "M4: Screening & Interview Skills", topics: ["Resume Analysis & Red Flags", "Telephonic Screening Techniques", "Candidate Evaluation & Feedback"] },
+    { title: "M5: Client Handling", topics: ["Requirement Gathering", "SLA & TAT Management", "Expectation & Escalation Management", "Negotiation Skills"] },
+    { title: "M6: Offer & Closure", topics: ["CTC Structure & Salary Negotiation", "Counter-Offer Handling", "Offer Rollout & Position Closure"] },
+    { title: "M7: Compliance Basics", topics: ["Labour Law Overview", "PF, ESIC & Minimum Wages", "Payroll & BGV Basics"] },
+    { title: "M8: HR Operations", topics: ["Onboarding & Documentation", "Attendance, Leave & Exit Processes", "HR MIS & Reporting"] },
+    { title: "M9: Recruiter KPIs", topics: ["Productivity Metrics & Reporting", "Source Performance Analysis", "Targets & Incentive Structures"] },
+    { title: "M10: Staffing Technology", topics: ["ATS & CRM Fundamentals", "Excel Tracking & Dashboards", "Hiring Automation Basics"] },
+    { title: "M11: Professional Skills", topics: ["Email & Call Etiquette", "Time & Stress Management", "Ethics & Confidentiality"] },
+    { title: "M12: Practical Training", topics: ["Live Sourcing Practice", "Mock Interviews & Role Plays", "Closure & Joining Tracking"] },
+    { title: "M13: Special Hiring (Optional)", topics: ["IT & Non-IT Hiring", "Bulk, Campus & Niche Hiring"] },
+    { title: "M14: Certification & Readiness", topics: ["Recruiter Resume Building", "Interview Preparation", "Final Assessment & Certification"] }
+  ];
+
+  const syllabusLabourLaw = [
+    { title: "M1: HR & Labour Law Foundations", topics: ["Role of HR in Legal Compliance", "Employer & Employee Rights", "HR Legal Responsibilities"] },
+    { title: "M2: Industrial & Employment Laws", topics: ["Industrial Disputes Act", "Termination, Layoff & Retrenchment", "Standing Orders & Trade Unions"] },
+    { title: "M3: Payroll & Wage Compliance", topics: ["Minimum Wages Act", "Payment of Wages Act", "Bonus & Gratuity Laws", "Shops & Establishment Act"] },
+    { title: "M4: Social Security Laws", topics: ["Provident Fund (EPF) - Practical Calculation", "ESI - Eligibility, Claims & Returns", "Labour Welfare Fund (LWF)"] },
+    { title: "M5: Women & Workplace Safety", topics: ["POSH Act (Sexual Harassment)", "Maternity Benefit Act", "Equal Remuneration Act"] },
+    { title: "M6: HR Documentation", topics: ["Appointment & Offer Letters", "HR Policies & Handbooks", "Warning & Termination Letters", "Compliance Registers"] },
+    { title: "M7: Practical Compliance & Audit", topics: ["Labour Law Compliance Calendar", "Inspection Handling", "HR Audit & Risk Management", "Corporate Case Studies"] }
+  ];
+
+  // --- 2. PROGRAM PRODUCTS ---
   const programs = [
     {
       id: "industry-ready",
@@ -92,14 +136,9 @@ export default function StaffingTrainingPage() {
       duration: "1 Month",
       mode: "Alternate Days",
       target: "Freshers & Beginners",
-      desc: "A practical, job-oriented program designed to make candidates industry-ready Recruiters.",
-      features: [
-        "Real Recruitment Processes",
-        "Live Sourcing Assignments",
-        "Telephonic Screening Practice",
-        "Interview Coordination"
-      ],
+      desc: "A practical, job-oriented program designed to make candidates industry-ready recruiters with live exposure.",
       idealFor: "Fresh Graduates, HR Interns, and Career Switchers looking for affordable, real-world exposure.",
+      syllabus: syllabusIndustryReady,
       popular: false,
       color: "blue"
     },
@@ -110,15 +149,10 @@ export default function StaffingTrainingPage() {
       duration: "30 Days",
       mode: "Alternate Batch",
       target: "Aspiring Professionals",
-      desc: "Comprehensive 14-module certification covering the entire staffing lifecycle from sourcing to compliance.",
-      features: [
-        "Full 14-Module Curriculum",
-        "Client Handling & KPIs",
-        "Staffing Technology (ATS/CRM)",
-        "Placement Support"
-      ],
+      desc: "Our flagship 14-module certification covering the entire staffing lifecycle from sourcing to compliance.",
       idealFor: "Those seeking a recognized certification and deep operational knowledge.",
-      popular: true, // This is the core offering
+      syllabus: syllabusCSRP,
+      popular: true, 
       color: "yellow"
     },
     {
@@ -128,14 +162,9 @@ export default function StaffingTrainingPage() {
       duration: "60 Days",
       mode: "Alternate Days",
       target: "HR Specialists",
-      desc: "Advanced specialization in Payroll, Social Security, POSH, and Industrial Relations.",
-      features: [
-        "PF, ESI, Gratuity Calculations",
-        "Legal Drafting & Policies",
-        "HR Audit & Risk Mgmt",
-        "Workplace Safety Laws"
-      ],
+      desc: "Advanced specialization in Payroll, Social Security, POSH, Industrial Relations and Audits.",
       idealFor: "HR Ops professionals and those wanting to master statutory compliance.",
+      syllabus: syllabusLabourLaw,
       popular: false,
       color: "emerald"
     }
@@ -191,15 +220,15 @@ export default function StaffingTrainingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Select Your Program</h2>
-            <p className="text-lg text-slate-600">Click on a card to view detailed deliverables, fees, and schedule.</p>
+            <p className="text-lg text-slate-600">Click on a card below to view the detailed syllabus and fee structure.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {programs.map((item) => (
               <div 
                 key={item.id}
-                onClick={() => setSelectedProgram(item)}
-                className={`group relative p-8 rounded-3xl transition-all duration-500 cursor-pointer h-full flex flex-col ${
+                onClick={() => { setSelectedProgram(item); setOpenModuleIndex(null); }}
+                className={`group relative p-8 rounded-3xl transition-all duration-500 cursor-pointer h-full flex flex-col justify-between ${
                   item.popular 
                   ? 'bg-white border-2 border-yellow-400 shadow-2xl shadow-yellow-500/10 scale-105 z-10' 
                   : 'bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2'
@@ -207,38 +236,45 @@ export default function StaffingTrainingPage() {
               >
                 {item.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center gap-1">
-                    <Sparkles size={12} fill="white" /> Most Popular
+                    <Sparkles size={12} fill="white" /> Best Seller
                   </div>
                 )}
                 
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`p-3 rounded-xl ${
-                      item.color === 'blue' ? 'bg-blue-100 text-blue-700' : 
-                      item.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 
-                      'bg-yellow-100 text-yellow-700'
+                {/* Card Content */}
+                <div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3 rounded-xl flex-shrink-0 ${
+                        item.color === 'blue' ? 'bg-blue-100 text-blue-700' : 
+                        item.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                      <Award className="w-6 h-6" />
+                    </div>
+                    <div className="text-right pl-2">
+                      <span className="block text-2xl font-bold text-slate-900 whitespace-nowrap">{item.price}</span>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">{item.title}</h3>
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+                      <span className="flex items-center gap-1"><Clock size={12} /> {item.duration}</span>
+                      <span>•</span>
+                      <span>{item.mode}</span>
+                  </div>
+                  
+                  <p className="text-slate-600 leading-relaxed text-sm mb-6">{item.desc}</p>
+                </div>
+                
+                {/* Card Footer Action */}
+                <div>
+                    <div className="w-full h-px bg-slate-100 mb-4"></div>
+                    <div className={`flex items-center text-sm font-bold ${
+                        item.color === 'blue' ? 'text-blue-600 group-hover:text-blue-700' : 
+                        item.color === 'emerald' ? 'text-emerald-600 group-hover:text-emerald-700' : 
+                        'text-yellow-600 group-hover:text-yellow-700'
                     }`}>
-                    <Award className="w-6 h-6" />
-                  </div>
-                  <div className="text-right">
-                    <span className="block text-lg font-bold text-slate-900">{item.price}</span>
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                    <Clock size={12} /> {item.duration} • {item.mode}
-                </div>
-                
-                <p className="text-slate-600 leading-relaxed text-sm mb-6 flex-grow">{item.desc}</p>
-                
-                <div className="w-full h-px bg-slate-100 mb-4"></div>
-
-                <div className={`flex items-center text-sm font-bold ${
-                    item.color === 'blue' ? 'text-blue-600 group-hover:text-blue-700' : 
-                    item.color === 'emerald' ? 'text-emerald-600 group-hover:text-emerald-700' : 
-                    'text-yellow-600 group-hover:text-yellow-700'
-                }`}>
-                   View Syllabus <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                       View Syllabus <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </div>
                 </div>
               </div>
             ))}
@@ -246,7 +282,7 @@ export default function StaffingTrainingPage() {
         </div>
       </section>
 
-      {/* --- PROGRAM DETAIL MODAL --- */}
+      {/* --- PROGRAM DETAIL MODAL (DYNAMIC SYLLABUS) --- */}
       {selectedProgram && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div 
@@ -254,10 +290,10 @@ export default function StaffingTrainingPage() {
             onClick={() => setSelectedProgram(null)}
           ></div>
 
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-modal flex flex-col max-h-[90vh]">
+          <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-modal flex flex-col max-h-[90vh]">
             
             {/* Modal Header */}
-            <div className="bg-slate-900 p-8 text-white relative">
+            <div className="bg-slate-900 p-8 text-white relative flex-shrink-0">
               <button 
                 onClick={() => setSelectedProgram(null)}
                 className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
@@ -272,44 +308,55 @@ export default function StaffingTrainingPage() {
                     <IndianRupee size={12} /> {selectedProgram.price}
                  </div>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{selectedProgram.title}</h3>
-              <p className="text-slate-300">{selectedProgram.mode}</p>
+              <h3 className="text-2xl md:text-3xl font-bold mb-2">{selectedProgram.title}</h3>
+              <p className="text-slate-300 text-sm md:text-base">{selectedProgram.idealFor}</p>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-8 overflow-y-auto">
-              <div className="mb-8">
-                <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                   <Target size={20} className="text-yellow-600" /> Who is this for?
+            {/* Modal Body (Scrollable Syllabus) */}
+            <div className="p-0 overflow-y-auto custom-scrollbar bg-slate-50 flex-grow">
+              
+              <div className="p-8">
+                <h4 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2 sticky top-0 bg-slate-50 z-10">
+                   <BookOpen size={20} className="text-yellow-600" /> Complete Curriculum
                 </h4>
-                <p className="text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  {selectedProgram.idealFor}
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                   <CheckCircle2 size={20} className="text-yellow-600" /> Key Features
-                </h4>
-                <ul className="grid sm:grid-cols-2 gap-3">
-                  {selectedProgram.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-slate-700 text-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
-                      {feature}
-                    </li>
+                
+                <div className="space-y-3">
+                  {selectedProgram.syllabus.map((mod, idx) => (
+                    <div key={idx} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                      <button 
+                        onClick={() => toggleModule(idx)}
+                        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+                      >
+                        <span className="font-bold text-slate-800 text-sm md:text-base">{mod.title}</span>
+                        {openModuleIndex === idx ? <ChevronUp size={18} className="text-yellow-600 flex-shrink-0" /> : <ChevronDown size={18} className="text-slate-400 flex-shrink-0" />}
+                      </button>
+                      
+                      {openModuleIndex === idx && (
+                        <div className="px-4 pb-4 bg-slate-50/50 border-t border-slate-100">
+                          <ul className="space-y-2 mt-3">
+                            {mod.topics.map((topic, tIdx) => (
+                              <li key={tIdx} className="flex items-start gap-2 text-sm text-slate-600">
+                                <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+                                {topic}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div className="p-6 border-t border-slate-100 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center flex-shrink-0">
               <div className="text-sm text-slate-500">
-                Next batch filling fast
+                <span className="font-bold text-slate-900">Note:</span> Live classes + Recording access
               </div>
               <Link to="/contact" className="w-full sm:w-auto">
                 <button className="w-full px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors shadow-lg shadow-yellow-500/20">
-                  Enroll in this Program
+                  Enroll in Batch
                 </button>
               </Link>
             </div>
@@ -317,57 +364,34 @@ export default function StaffingTrainingPage() {
         </div>
       )}
 
-      {/* --- DETAILED SYLLABUS GRID (CSRP Focus) --- */}
+      {/* --- CSRP PREVIEW GRID (Static Preview for SEO/Visuals) --- */}
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
             <div className="inline-block p-3 rounded-2xl bg-yellow-50 mb-4">
-                <BookOpen className="w-8 h-8 text-yellow-600" />
+                <Target className="w-8 h-8 text-yellow-600" />
             </div>
             <h2 className="text-3xl lg:text-5xl font-bold text-slate-900 mb-6">
-              CSRP Curriculum Breakdown
+              Why Our CSRP Certification?
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Our flagship 14-module syllabus that covers the entire recruitment lifecycle.
+              A glimpse into the 14 modules that define our flagship Certified Staffing & Recruitment Professional program.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            {modules.map((mod) => (
-              <div 
-                key={mod.id}
-                className="card-hover-effect group p-6 bg-white rounded-2xl border border-slate-100 relative overflow-hidden"
-              >
-                {/* Number Watermark */}
-                <div className="absolute -right-4 -top-4 text-9xl font-bold text-slate-50 opacity-50 group-hover:text-yellow-50 transition-colors duration-500 pointer-events-none select-none">
-                  {mod.id}
-                </div>
-
-                <div className="relative z-10 flex items-start gap-5">
-                  <div className="shrink-0 w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-slate-900 group-hover:border-slate-900 transition-all duration-300 shadow-sm">
-                    <div className="text-yellow-600 group-hover:text-yellow-400 transition-colors">
-                        {React.cloneElement(mod.icon, { size: 24 })}
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 pt-1">
-                    <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-yellow-600 transition-colors">
-                      {mod.title}
-                    </h3>
-                    <div className="space-y-3">
-                      {mod.topics.map((topic, tIdx) => (
-                        <div key={tIdx} className="flex items-center gap-3 text-sm text-slate-600 group-hover:text-slate-700">
-                          <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-yellow-500 transition-colors" />
-                          <span>{topic}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* Simple Grid Preview of CSRP High-Level Modules */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {syllabusCSRP.slice(0, 8).map((mod, idx) => (
+               <div key={idx} className="p-4 rounded-xl border border-slate-100 bg-slate-50 text-center hover:bg-white hover:shadow-md transition-all">
+                  <h4 className="font-bold text-slate-800 text-sm mb-1">{mod.title.split(":")[1] || mod.title}</h4>
+                  <span className="text-xs text-slate-500">Module {idx + 1}</span>
+               </div>
             ))}
+             <div className="col-span-2 md:col-span-4 p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center text-slate-500 text-sm flex items-center justify-center">
+                + 6 More Advanced Modules (Click "CSRP" above to view full syllabus)
+             </div>
           </div>
         </div>
       </section>
