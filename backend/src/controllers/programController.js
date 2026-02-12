@@ -1,61 +1,118 @@
-const Program = require('../models/Program');
+const Program = require("../models/Program");
 
+// ==============================
+// PUBLIC: Get Active Programs
+// ==============================
 exports.getAllPrograms = async (req, res) => {
-  const programs = await Program.find({ isActive: true });
-  res.json(programs);
+  try {
+    const programs = await Program.find({ isActive: true });
+    res.json(programs);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch programs" });
+  }
 };
 
+// ==============================
+// PUBLIC: Get Single Program
+// ==============================
 exports.getProgramById = async (req, res) => {
-  const program = await Program.findById(req.params.id);
-  if (!program)
-    return res.status(404).json({ message: 'Program not found' });
+  try {
+    const program = await Program.findById(req.params.id);
 
-  res.json(program);
+    if (!program)
+      return res.status(404).json({ message: "Program not found" });
+
+    res.json(program);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch program" });
+  }
 };
 
-// ADMIN: Create new program
+// ==============================
+// ADMIN: Create Program (FULL)
+// ==============================
 exports.createProgram = async (req, res) => {
   try {
-    const { title, description, duration, price } = req.body;
+    const {
+      title,
+      description,
+      duration,
+      price,
+      certification,
+      schedule,
+      learningOutcomes,
+      modules
+    } = req.body;
 
     if (!title || !price) {
-      return res.status(400).json({ message: "Title and price are required" });
+      return res
+        .status(400)
+        .json({ message: "Title and price are required" });
     }
 
     const program = await Program.create({
       title,
       description,
       duration,
-      price
+      price,
+      certification,
+      schedule,
+      learningOutcomes,
+      modules
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Program created successfully",
       program
     });
   } catch (error) {
     console.error("Create program error:", error);
-    return res.status(500).json({ message: "Failed to create program" });
+    res.status(500).json({ message: "Failed to create program" });
   }
 };
 
-// ADMIN: Toggle program active status
-exports.toggleProgramStatus = async (req, res) => {
+// ==============================
+// ADMIN: Update Program (EDIT)
+// ==============================
+exports.updateProgram = async (req, res) => {
   try {
     const program = await Program.findById(req.params.id);
 
-    if (!program) {
+    if (!program)
       return res.status(404).json({ message: "Program not found" });
-    }
 
-    program.isActive = !program.isActive;
+    Object.assign(program, req.body);
+
     await program.save();
 
     res.json({
-      message: "Program status updated",
+      message: "Program updated successfully",
       program
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update program status" });
+    console.error("Update program error:", error);
+    res.status(500).json({ message: "Failed to update program" });
+  }
+};
+
+// ==============================
+// ADMIN: Deactivate Program
+// ==============================
+exports.deactivateProgram = async (req, res) => {
+  try {
+    const program = await Program.findById(req.params.id);
+
+    if (!program)
+      return res.status(404).json({ message: "Program not found" });
+
+    program.isActive = false;
+    await program.save();
+
+    res.json({
+      message: "Program deactivated successfully",
+      program
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to deactivate program" });
   }
 };

@@ -25,7 +25,7 @@ export default function ProgramsPage() {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [openProgramId, setOpenProgramId] = useState(null);
   useEffect(() => {
     const loadPrograms = async () => {
       try {
@@ -145,84 +145,139 @@ export default function ProgramsPage() {
 
       </section>
 
+            
       {/* --- PROGRAMS GRID --- */}
       <section className="py-24 bg-slate-50 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {programs.map((program, index) => (
-              <div 
+            {programs.map((program, index) => {
+            const isOpen = openProgramId === program._id;
+
+            return (
+              <div
                 key={program._id}
                 style={{ animationDelay: `${index * 0.1}s` }}
-                className="animate-fade-up group flex flex-col bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 overflow-hidden relative"
+                className="animate-fade-up group flex flex-col bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-2xl hover:shadow-yellow-100 hover:-translate-y-2 transition-all duration-300 overflow-hidden relative"
               >
                 {/* Decoration Line */}
                 <div className="h-1.5 w-full bg-gradient-to-r from-yellow-400 to-yellow-600" />
 
                 <div className="p-8 flex-1 flex flex-col">
-                    {/* Header Info */}
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wide">
-                            <Clock size={14} />
-                            {program.duration || 'Self Paced'}
-                        </div>
-                        <div className="text-xl font-bold text-slate-900">
-                           ₹{program.price?.toLocaleString() || '0'}
-                        </div>
+
+                  {/* Header Info */}
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wide">
+                      <Clock size={14} />
+                      {program.duration || "Self Paced"}
                     </div>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-yellow-600 transition-colors">
-                        {program.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-slate-600 text-sm leading-relaxed mb-8 line-clamp-3">
-                        {program.description}
-                    </p>
-
-                    <div className="h-px w-full bg-slate-100 mb-6" />
-
-                    {/* Meta Icons */}
-                    <div className="space-y-4 mb-8">
-                        <div className="flex items-center gap-3 text-slate-700">
-                            <BookOpen className="w-5 h-5 text-yellow-500" />
-                            <span className="text-sm font-medium">Professional Certification</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-slate-700">
-                            <Users className="w-5 h-5 text-yellow-500" />
-                            <span className="text-sm font-medium">Expert Mentorship</span>
-                        </div>
+                    <div className="text-xl font-bold text-slate-900">
+                      ₹{program.price?.toLocaleString() || "0"}
                     </div>
-                    
-                    {/* Learning Outcomes */}
-                    {program.learningOutcomes && program.learningOutcomes.length > 0 && (
-                        <div className="mt-auto mb-8 bg-slate-50 p-4 rounded-xl">
-                            <p className="text-xs font-bold text-slate-400 uppercase mb-3">Key Takeaways</p>
-                            <ul className="space-y-2">
-                                {program.learningOutcomes.slice(0, 3).map((outcome, idx) => (
-                                    <li key={idx} className="flex items-start gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                                        <span className="text-xs text-slate-600 line-clamp-1">{outcome}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                    
-                    {!program.learningOutcomes && <div className="mt-auto" />}
+                  </div>
 
-                    {/* Action Button */}
-                    <button 
-                        onClick={() => handleEnrollClick(program)}
-                        className="w-full py-4 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg"
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-yellow-600 transition-colors">
+                    {program.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-3">
+                    {program.description}
+                  </p>
+
+                  <div className="h-px w-full bg-slate-100 mb-6" />
+
+                  {/* Meta Icons */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center gap-3 text-slate-700">
+                      <BookOpen className="w-5 h-5 text-yellow-500" />
+                      <span className="text-sm font-medium">
+                        {program.certification || "Professional Certification"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-slate-700">
+                      <Users className="w-5 h-5 text-yellow-500" />
+                      <span className="text-sm font-medium">
+                        {program.schedule || "Expert Mentorship"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* View Details Button */}
+                  {program.modules && program.modules.length > 0 && (
+                    <button
+                      onClick={() =>
+                        setOpenProgramId(isOpen ? null : program._id)
+                      }
+                      className="text-sm font-bold text-yellow-600 hover:text-yellow-700 mb-6 transition"
                     >
-                        Enroll Now
-                        <ArrowRight size={16} />
+                      {isOpen ? "Hide Details ▲" : "View Details ▼"}
                     </button>
+                  )}
+
+                  {/* MODULE DETAILS */}
+                  {isOpen && program.modules && (
+                    <div className="bg-slate-50 p-5 rounded-xl mb-6 space-y-4 animate-fade-up">
+                      {program.modules.map((module, idx) => (
+                        <div key={idx}>
+                          <h4 className="font-bold text-slate-800 text-sm mb-2">
+                            {module.title}
+                          </h4>
+                          <ul className="space-y-1">
+                            {module.topics.map((topic, tIdx) => (
+                              <li
+                                key={tIdx}
+                                className="flex items-start gap-2 text-xs text-slate-600"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
+                                {topic}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Learning Outcomes */}
+                  {program.learningOutcomes &&
+                    program.learningOutcomes.length > 0 && (
+                      <div className="mt-auto mb-6 bg-slate-50 p-4 rounded-xl">
+                        <p className="text-xs font-bold text-slate-400 uppercase mb-3">
+                          Key Takeaways
+                        </p>
+                        <ul className="space-y-2">
+                          {program.learningOutcomes
+                            .slice(0, 3)
+                            .map((outcome, idx) => (
+                              <li
+                                key={idx}
+                                className="flex items-start gap-2"
+                              >
+                                <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                                <span className="text-xs text-slate-600">
+                                  {outcome}
+                                </span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+
+                  {/* Enroll Button */}
+                  <button
+                    onClick={() => handleEnrollClick(program)}
+                    className="w-full py-4 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg"
+                  >
+                    Enroll Now
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </div>
-            ))}
+            );
+          })}
+
           </div>
         </div>
       </section>

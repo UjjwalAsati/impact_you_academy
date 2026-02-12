@@ -4,12 +4,21 @@ const router = express.Router();
 const programController = require("../controllers/programController");
 const { protect, adminOnly } = require("../middlewares/authMiddleware");
 
-// PUBLIC routes
+// ==========================
+// PUBLIC ROUTES
+// ==========================
 router.get("/", programController.getAllPrograms);
 router.get("/:id", programController.getProgramById);
 
-// ADMIN ONLY
+// ==========================
+// ADMIN ROUTES
+// ==========================
 router.post("/", protect, adminOnly, programController.createProgram);
-router.patch("/:id/toggle",protect, adminOnly, programController.toggleProgramStatus);
+
+// UPDATE PROGRAM (Edit)
+router.patch("/:id", protect, adminOnly, programController.updateProgram);
+
+// DEACTIVATE PROGRAM
+router.patch("/:id/deactivate", protect, adminOnly, programController.deactivateProgram);
 
 module.exports = router;
