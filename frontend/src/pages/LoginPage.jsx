@@ -38,18 +38,24 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    // Simulate slight delay to show loading animation
+
     setTimeout(async () => {
-        try {
-            await login(formData);
-            if (isAdmin) navigate("/admin");
-            else navigate("/programs");
-        } catch (err) {
-            setError(err.message || "Invalid credentials");
-            setLoading(false);
+      try {
+        const userData = await login(formData); // make sure login returns user
+
+        if (userData?.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard"); // better UX than /programs
         }
+
+      } catch (err) {
+        setError(err.message || "Invalid credentials");
+        setLoading(false);
+      }
     }, 800);
   };
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-slate-50 overflow-hidden">

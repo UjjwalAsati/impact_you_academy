@@ -23,7 +23,9 @@ import AdminEnrollments from "./pages/admin/AdminEnrollments";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminInquiries from "./pages/admin/AdminInquiries";
 import UserDashboard from "./pages/dashboard/UserDashboard";
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 function ScrollHandler() {
   const { pathname } = useLocation();
 
@@ -42,6 +44,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/curriculum" element={<CurriculumPage />} />
@@ -50,27 +53,20 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-                  {/* USER PROTECTED */}
+          {/* USER PROTECTED */}
           <Route
-            path="/programs"
+            path="/dashboard"
             element={
               <ProtectedRoute>
-                <ProgramsPage />
+                <UserDashboard />
               </ProtectedRoute>
             }
           />
-          <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <UserDashboard />
-            </ProtectedRoute>
-          }
-        />
 
-
-          {/* ADMIN PROTECTED (placeholder for now) */}
+          {/* ADMIN PROTECTED */}
           <Route
             path="/admin"
             element={
@@ -84,10 +80,9 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="enrollments" element={<AdminEnrollments />} />
             <Route path="inquiries" element={<AdminInquiries />} />
-
           </Route>
-
         </Routes>
+
         <Footer />
         <Toaster position="top-right" />
       </BrowserRouter>

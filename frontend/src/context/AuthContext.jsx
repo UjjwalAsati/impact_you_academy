@@ -8,14 +8,20 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load auth from localStorage on refresh
+  // Load auth safely from localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (storedToken && storedUser && storedUser !== "undefined") {
+      try {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Invalid stored user data");
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
     }
 
     setLoading(false);
@@ -29,16 +35,14 @@ export const AuthProvider = ({ children }) => {
 
     setToken(data.token);
     setUser(data.user);
+
+    return data.user;
   };
 
+  // 🔥 IMPORTANT: REGISTER DOES NOT AUTO LOGIN ANYMORE
   const register = async (formData) => {
     const data = await registerUser(formData);
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    setToken(data.token);
-    setUser(data.user);
+    return data; // just return message
   };
 
   const logout = () => {

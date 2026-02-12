@@ -3,18 +3,19 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { User, Mail, Lock, ArrowRight, Loader2, UserPlus } from "lucide-react";
 
+
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: ""
   });
-
+  
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
   
   // State to trigger the "Crowd Attraction" animation
   const [isAttracting, setIsAttracting] = useState(false);
@@ -42,20 +43,25 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setLoading(true);
 
-    // Simulate slight delay for smooth UI transition
-    setTimeout(async () => {
-      try {
-        await register(formData);
-        // After successful registration, send user to programs
-        navigate("/programs");
-      } catch (err) {
-        setError(err.message || "Registration failed. Please try again.");
-        setLoading(false);
-      }
-    }, 800);
+    try {
+      await register(formData);
+
+      setSuccessMessage(
+        "Verification email sent! Please check your inbox."
+      );
+
+      setLoading(false);
+
+    } catch (err) {
+      setError(err.message || "Registration failed. Please try again.");
+      setLoading(false);
+    }
   };
+
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-slate-50 overflow-hidden">
@@ -98,6 +104,11 @@ const RegisterPage = () => {
         {error && (
           <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center font-medium border border-red-100">
             {error}
+          </div>
+        )}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg text-center font-medium border border-green-100">
+            {successMessage}
           </div>
         )}
 

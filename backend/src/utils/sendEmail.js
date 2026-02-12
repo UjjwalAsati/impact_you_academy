@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async ({ to, subject, text }) => {
+const sendEmail = async ({ to, subject, html }) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
-    port: 587,
+    port: process.env.EMAIL_PORT,
     secure: false,
     auth: {
       user: process.env.EMAIL_USER,
@@ -15,7 +15,7 @@ const sendEmail = async ({ to, subject, text }) => {
     from: `"Impact You Academy" <${process.env.EMAIL_USER}>`,
     to,
     subject,
-    text
+    html
   });
 };
 
