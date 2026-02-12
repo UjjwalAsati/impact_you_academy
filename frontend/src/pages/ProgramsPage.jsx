@@ -159,9 +159,15 @@ export default function ProgramsPage() {
         </div>
 
         {/* Scroll Indicator - Positioned at Bottom */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Scroll to Explore</span>
+        <div className="absolute inset-x-0 bottom-12 flex justify-center z-10 animate-fade-up delay-300">
+          <div
+          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+          className="flex flex-col items-center gap-2 opacity-60 animate-bounce cursor-pointer">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest text-center">
+              Scroll to Explore
+            </span>
           <ChevronDown className="w-6 h-6 text-slate-400" />
+          </div>
         </div>
       </section>
 
@@ -386,3 +392,4 @@ export default function ProgramsPage() {
     </div>
   );
 }
+
