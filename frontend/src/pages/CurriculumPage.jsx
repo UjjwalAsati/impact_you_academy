@@ -16,11 +16,30 @@ import {
   ChevronRight,
   Sparkles,
   GraduationCap,
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from 'lucide-react';
 
 export default function CurriculumPage() {
   const [activeCategory, setActiveCategory] = useState('Foundation Modules');
+
+  // --- INTERNAL ANIMATION STYLES ---
+  const animationStyles = `
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .animate-fade-up { animation: fadeUp 0.8s ease-out forwards; opacity: 0; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+  `;
 
   const philosophyPrinciples = [
     {
@@ -193,36 +212,53 @@ export default function CurriculumPage() {
 
   return (
     <div data-testid="curriculum-page" className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100">
+      <style>{animationStyles}</style>
       
-      {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-white">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-yellow-50 to-transparent opacity-50" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-slate-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
+      {/* --- HERO SECTION (Full Screen Flex) --- */}
+      <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-32 pb-10">
         
-        <div className="container-custom relative z-10 px-4 mx-auto max-w-7xl">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/5 text-slate-600 text-sm font-semibold mb-6">
-              <Sparkles className="w-4 h-4 text-yellow-600" />
-              <span>Industry-Standard Syllabus</span>
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 mb-8 tracking-tight">
-              Curriculum & <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-yellow-500">Methodology</span>
-            </h1>
-            <p className="text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
-              We don't just teach theory. Our curriculum is engineered around <span className="font-semibold text-slate-900">real-world workflows</span>, transforming you from a student into a practitioner.
-            </p>
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
+            <div className="absolute top-[10%] right-[-5%] w-[600px] h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-50 mix-blend-multiply animate-float" />
+            <div className="absolute bottom-[10%] left-[-5%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-50 mix-blend-multiply animate-float" style={{ animationDelay: '2s' }} />
+        </div>
+        
+        {/* Main Content Centered */}
+        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          
+          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-8">
+            <Sparkles className="w-4 h-4 text-yellow-600" />
+            <span>Industry-Standard Syllabus</span>
           </div>
+
+          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
+            Curriculum & <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
+              Methodology
+            </span>
+          </h1>
+
+          <p className="animate-fade-up delay-300 text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            We don't just teach theory. Our curriculum is engineered around <span className="font-semibold text-slate-900">real-world workflows</span>, transforming you from a student into a practitioner.
+          </p>
+
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce mt-12 flex-shrink-0">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Explore Modules</span>
+          <ChevronDown className="text-slate-400" />
         </div>
       </section>
 
       {/* --- PHILOSOPHY CARDS --- */}
-      <section className="py-20 bg-white relative z-20 -mt-10">
+      <section className="py-24 bg-white relative z-20 border-t border-slate-100">
         <div className="container-custom px-4 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {philosophyPrinciples.map((principle, index) => (
               <div 
                 key={index} 
-                className="group p-8 bg-white border border-slate-100 rounded-3xl shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 hover:-translate-y-2 transition-all duration-300"
+                className="group p-8 bg-white border border-slate-100 rounded-3xl shadow-lg hover:shadow-2xl hover:shadow-yellow-500/10 hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-yellow-100 transition-colors">
                   {principle.icon}
@@ -240,18 +276,18 @@ export default function CurriculumPage() {
       </section>
 
       {/* --- INTERACTIVE CURRICULUM --- */}
-      <section className="py-24 bg-slate-50" id="curriculum-content">
+      <section className="py-24 bg-slate-50 relative" id="curriculum-content">
         <div className="container-custom px-4 mx-auto max-w-7xl">
           
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
               Explore the Syllabus
             </h2>
-            <p className="text-slate-600">Select a category below to view detailed modules.</p>
+            <p className="text-slate-600 text-lg">Select a category below to view detailed modules.</p>
           </div>
 
-          {/* 1. Static Tab Navigation (Fixed: No longer sticky/moving) */}
-          <div className="mb-12">
+          {/* 1. Tab Navigation */}
+          <div className="mb-16">
             <div className="flex flex-wrap justify-center gap-3 md:gap-4">
               {curriculumModules.map((cat) => (
                 <button
@@ -274,31 +310,31 @@ export default function CurriculumPage() {
           <div className="min-h-[400px] animate-in fade-in slide-in-from-bottom-4 duration-500 key={activeCategory}">
             
             {/* Category Description */}
-            <div className="text-center mb-10">
+            <div className="text-center mb-12">
               <h3 className="text-2xl font-bold text-slate-900 flex items-center justify-center gap-3">
                 <GraduationCap className="text-yellow-600" />
                 {activeCategory}
               </h3>
-              <p className="text-slate-500 mt-2 text-lg">{currentCategoryData?.description}</p>
+              <p className="text-slate-500 mt-2 text-lg max-w-2xl mx-auto">{currentCategoryData?.description}</p>
             </div>
 
             {/* Grid Layout for Modules */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {currentCategoryData?.modules.map((module, modIndex) => (
                 <Accordion 
                   key={modIndex} 
                   type="single" 
                   collapsible 
-                  className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                  className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-yellow-200 transition-all duration-300 overflow-hidden"
                 >
                   <AccordionItem value={`item-${modIndex}`} className="border-none">
-                    <AccordionTrigger className="px-6 py-5 hover:bg-slate-50 hover:no-underline group">
+                    <AccordionTrigger className="px-8 py-6 hover:bg-slate-50 hover:no-underline group">
                       <span className="text-left font-bold text-slate-800 text-lg group-hover:text-yellow-700 transition-colors">
                         {module.title}
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="bg-slate-50/50 px-6 pb-6 pt-2">
-                      <div className="space-y-3">
+                    <AccordionContent className="bg-slate-50/50 px-8 pb-8 pt-2">
+                      <div className="space-y-4">
                         {module.topics.map((topic, tIndex) => (
                           <div key={tIndex} className="flex items-start gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-2 shrink-0" />
@@ -317,9 +353,10 @@ export default function CurriculumPage() {
       </section>
 
       {/* --- LEARNING OUTCOMES --- */}
-      <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
+      <section className="py-32 bg-slate-900 text-white overflow-hidden relative">
         {/* Background texture */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500 rounded-full blur-[100px] opacity-10 pointer-events-none" />
         
         <div className="container-custom px-4 mx-auto max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -336,7 +373,6 @@ export default function CurriculumPage() {
                 By the end of this program, you won't just know about recruitment; you will have the confidence to execute the entire lifecycle independently.
               </p>
               
-              {/* --- FIXED BUTTON: Brighter & High Contrast --- */}
               <Link to="/contact">
                 <button className="group relative px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-slate-900 rounded-full font-bold text-lg shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:shadow-[0_0_30px_rgba(250,204,21,0.6)] transition-all duration-300 flex items-center gap-3 transform hover:-translate-y-1">
                   Get Started Today

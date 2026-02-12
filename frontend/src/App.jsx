@@ -44,62 +44,79 @@ function ScrollHandler() {
   return null;
 }
 
+// --- LAYOUT COMPONENT ---
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* 1. Navbar is ALWAYS visible now */}
+      <Navbar />
+      
+      {/* 2. Main Content */}
+      <div className="flex-grow">
+        {children}
+      </div>
+      
+      {/* 3. Footer HIDDEN on Admin Routes */}
+      {!isAdminRoute && <Footer />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <ScrollHandler/>
-        <Navbar />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/programs" element={<ProgramsPage />} />
-          
-          {/* NEW ROUTE ADDED HERE */}
-          <Route path="/staffing-training" element={<StaffingTrainingPage />} />
-          
-          <Route path="/curriculum" element={<CurriculumPage />} />
-          <Route path="/practical-training" element={<PracticalTrainingPage />} />
-          <Route path="/certification" element={<CertificationPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
-          
-          {/* Auth Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Layout>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/programs" element={<ProgramsPage />} />
+            <Route path="/staffing-training" element={<StaffingTrainingPage />} />
+            <Route path="/curriculum" element={<CurriculumPage />} />
+            <Route path="/practical-training" element={<PracticalTrainingPage />} />
+            <Route path="/certification" element={<CertificationPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            
+            {/* Auth Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
-          {/* USER PROTECTED */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* USER PROTECTED */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* ADMIN PROTECTED */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          >
-            <Route index element={<AdminHome />} />
-            <Route path="programs" element={<AdminPrograms />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="enrollments" element={<AdminEnrollments />} />
-            <Route path="inquiries" element={<AdminInquiries />} />
-          </Route>
-        </Routes>
-
-        <Footer />
+            {/* ADMIN PROTECTED */}
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            >
+              <Route index element={<AdminHome />} />
+              <Route path="programs" element={<AdminPrograms />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="enrollments" element={<AdminEnrollments />} />
+              <Route path="inquiries" element={<AdminInquiries />} />
+            </Route>
+          </Routes>
+        </Layout>
         <Toaster position="top-right" />
       </BrowserRouter>
     </div>

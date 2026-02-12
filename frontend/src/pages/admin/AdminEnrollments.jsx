@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import { fetchEnrollments, updateEnrollmentStatus } 
 from "../../services/adminEnrollmentService";
 import { useAuth } from "../../context/AuthContext";
+import { Clock, Calendar, RefreshCw } from "lucide-react";
 
 const AdminEnrollments = () => {
   const { token } = useAuth();
-
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const loadEnrollments = async () => {
+    if (!token) return;
+    setLoading(true);
     try {
-      setLoading(true);
       const data = await fetchEnrollments(token);
       setEnrollments(data);
     } catch (err) {
-      setError(err.message);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -24,115 +24,154 @@ const AdminEnrollments = () => {
 
   useEffect(() => {
     loadEnrollments();
-  }, []);
+  }, [token]);
 
   const calculateDaysLeft = (createdAt, duration) => {
-    if (!duration) return "-";
-
+    if (!duration) return <span className="text-slate-400">-</span>;
     const weeksMatch = duration.match(/\d+/);
     if (!weeksMatch) return "-";
-
     const totalDays = Number(weeksMatch[0]) * 7;
-    const startDate = new Date(createdAt);
-    const today = new Date();
+    const passed = Math.floor(
+      (new Date() - new Date(createdAt)) / (1000 * 60 * 60 * 24)
+    );
+    const left = totalDays - passed;
 
-    const diffTime = today - startDate;
-    const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return left > 0 ? (
+      <span className="text-slate-600 font-medium">{left} Days</span>
+    ) : (
+      <span className="text-green-600 font-bold">Completed</span>
+    );
+  };
 
-    const daysLeft = totalDays - daysPassed;
-    return daysLeft > 0 ? daysLeft : "Completed";
+  const getStatusBadge = (status) => {
+    const normalized = status?.toLowerCase();
+
+    const styles = {
+      active: "bg-green-50 text-green-700 border-green-100",
+      pending: "bg-orange-50 text-orange-700 border-orange-100",
+      completed: "bg-blue-50 text-blue-700 border-blue-100",
+    };
+
+    return (
+      <span
+        className={`px-2.5 py-0.5 rounded-full text-xs font-bold border uppercase tracking-wide ${
+          styles[normalized] || "bg-slate-100 text-slate-600"
+        }`}
+      >
+        {normalized}
+      </span>
+    );
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-navy mb-6">
-        Enrollments
-      </h1>
+    <div className="space-y-8 pb-10">
+      <div className="flex justify-between items-end border-b border-slate-200 pb-5">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Enrollments</h1>
+          <p className="text-slate-500 mt-1">
+            Track student progress and subscriptions.
+          </p>
+        </div>
+        <button
+          onClick={loadEnrollments}
+          className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 shadow-sm transition-colors"
+        >
+          <RefreshCw size={18} />
+        </button>
+      </div>
 
-      {error && (
-        <p className="text-red-500 text-sm mb-4">{error}</p>
-      )}
-
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-100 text-left">
-            <tr>
-              <th className="px-6 py-4 font-semibold">User</th>
-              <th className="px-6 py-4 font-semibold">Program</th>
-              <th className="px-6 py-4 font-semibold">Status</th>
-              <th className="px-6 py-4 font-semibold">Action</th>
-              <th className="px-6 py-4 font-semibold">Enrolled On</th>
-              <th className="px-6 py-4 font-semibold">Days Left</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {loading ? (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-xs border-b border-slate-200">
               <tr>
-                <td colSpan="5" className="px-6 py-6 text-center">
-                  Loading enrollments...
-                </td>
+                <th className="px-6 py-4">Student</th>
+                <th className="px-6 py-4">Program</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Joined</th>
+                <th className="px-6 py-4">Timeline</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ) : enrollments.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="px-6 py-6 text-center">
-                  No enrollments found
-                </td>
-              </tr>
-            ) : (
-              enrollments.map((enrollment) => (
-                <tr key={enrollment._id} className="border-t">
-                  <td className="px-6 py-4">
-                    <div className="font-medium">
-                      {enrollment.user?.name}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {enrollment.user?.email}
-                    </div>
-                  </td>
+            </thead>
 
-                  <td className="px-6 py-4">
-                    {enrollment.program?.title}
-                  </td>
-
-                  <td className="px-6 py-4 capitalize">
-                    {enrollment.status}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    {enrollment.status !== "completed" && (
-                      <button
-                        onClick={async () => {
-                          await updateEnrollmentStatus(
-                            enrollment._id,
-                            enrollment.status === "pending" ? "active" : "completed",
-                            token
-                          );
-                          loadEnrollments();
-                        }}
-                        className="px-4 py-1 text-sm rounded-lg bg-navy text-white hover:bg-navy/90"
-                      >
-                        Mark {enrollment.status === "pending" ? "Active" : "Completed"}
-                      </button>
-                    )}
-                  </td>
-
-
-                  <td className="px-6 py-4">
-                    {new Date(enrollment.createdAt).toLocaleDateString()}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    {calculateDaysLeft(
-                      enrollment.createdAt,
-                      enrollment.program?.duration
-                    )}
+            <tbody className="divide-y divide-slate-100">
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
+                    Loading records...
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : enrollments.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
+                    No enrollments found.
+                  </td>
+                </tr>
+              ) : (
+                enrollments.map((en) => (
+                  <tr
+                    key={en._id}
+                    className="hover:bg-slate-50/50 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
+                          {en.user?.name
+                            ?.slice(0, 2)
+                            ?.toUpperCase() || "NA"}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900">
+                            {en.user?.name || "Unknown"}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {en.user?.email || "-"}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 font-medium text-slate-700">
+                      {en.program?.title || "-"}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {getStatusBadge(en.status)}
+                    </td>
+
+                    <td className="px-6 py-4 text-slate-500">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} />
+                        {new Date(en.createdAt).toLocaleDateString()}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <Clock size={14} />
+                        {calculateDaysLeft(
+                          en.createdAt,
+                          en.program?.duration
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-right">
+                      {en.status?.toLowerCase() !== "completed" && (
+                        <button className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                          Mark{" "}
+                          {en.status?.toLowerCase() === "pending"
+                            ? "Active"
+                            : "Completed"}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

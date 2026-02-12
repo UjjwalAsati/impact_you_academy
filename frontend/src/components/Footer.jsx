@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ArrowRight, Linkedin, Twitter, Facebook, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Twitter, Facebook } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -8,8 +8,8 @@ export const Footer = () => {
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
-      <div className="container-custom pt-24 pb-16 relative z-10">
-
+      
+      <div className="container-custom pb-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Section */}
           <div className="space-y-6">
@@ -57,7 +57,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Information */}
+          {/* Updated Contact Information */}
           <div>
             <h4 className="font-bold text-lg mb-6 heading-font flex items-center" data-testid="footer-contact-heading">
               <span className="text-gold mr-2">•</span> Contact Us
@@ -68,8 +68,10 @@ export const Footer = () => {
                   <Phone size={18} className="text-gold" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400 mb-1">Call Us</p>
-                  <p className="text-sm text-slate-200 font-medium" data-testid="footer-phone">+91 (XXX) XXX-XXXX</p>
+                  <p className="text-xs text-slate-400 mb-1">Mobile</p>
+                  <a href="tel:+916269391942" className="text-sm text-slate-200 font-medium hover:text-gold transition-colors" data-testid="footer-phone">
+                    +91 62693 91942
+                  </a>
                 </div>
               </li>
               <li className="flex items-start space-x-3 group">
@@ -78,7 +80,9 @@ export const Footer = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 mb-1">Email Us</p>
-                  <p className="text-sm text-slate-200 font-medium break-all" data-testid="footer-email">info@impactyouacademy.com</p>
+                  <a href="mailto:impactyouacademy@gmail.com" className="text-sm text-slate-200 font-medium break-all hover:text-gold transition-colors" data-testid="footer-email">
+                    impactyouacademy@gmail.com
+                  </a>
                 </div>
               </li>
               <li className="flex items-start space-x-3 group">
@@ -86,30 +90,49 @@ export const Footer = () => {
                   <MapPin size={18} className="text-gold" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400 mb-1">Visit Us</p>
-                  <p className="text-sm text-slate-200 font-medium" data-testid="footer-address">Business District, Corporate Tower<br />City, State - 000000</p>
+                  <p className="text-xs text-slate-400 mb-1">Address</p>
+                  <p className="text-sm text-slate-200 font-medium leading-relaxed" data-testid="footer-address">
+                    Impact You Academy<br />
+                    3rd Floor, 315 MG Road<br />
+                    Indore – 452010, MP, India
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter & Social */}
+          {/* Newsletter & Updated Social Links */}
           <div>
             <h4 className="font-bold text-lg mb-6 heading-font flex items-center" data-testid="footer-legal-heading">
               <span className="text-gold mr-2">•</span> Connect With Us
             </h4>
             <p className="text-sm text-slate-300 mb-4">Stay updated with our latest programs and industry insights.</p>
             <div className="flex space-x-3 mb-6">
-              {[Linkedin, Twitter, Facebook, Instagram].map((Icon, idx) => (
-                <a
-                  key={idx}
-                  href="#"
-                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110"
-                  aria-label="Social media link"
-                >
-                  <Icon size={18} className="text-slate-300 hover:text-gold transition-colors" />
-                </a>
-              ))}
+              <a
+                href="https://www.linkedin.com/company/impact-you-academy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={18} className="text-slate-300 group-hover:text-gold transition-colors" />
+              </a>
+              <a
+                href="https://www.instagram.com/impactyouacademy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                aria-label="Instagram"
+              >
+                <Instagram size={18} className="text-slate-300 group-hover:text-gold transition-colors" />
+              </a>
+              {/* Optional Social Icons */}
+              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 flex items-center justify-center transition-all duration-300 opacity-50 hover:opacity-100">
+                <Twitter size={18} className="text-slate-300" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 flex items-center justify-center transition-all duration-300 opacity-50 hover:opacity-100">
+                <Facebook size={18} className="text-slate-300" />
+              </a>
             </div>
             <ul className="space-y-2">
               <li><a href="#" data-testid="footer-link-privacy" className="text-xs text-slate-400 hover:text-gold transition-colors">Privacy Policy</a></li>
