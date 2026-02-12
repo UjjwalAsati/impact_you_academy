@@ -6,7 +6,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
 // Page Imports
-import HomePage from './pages/HomePage';
+import Homepage from './pages/Homepage';
 import ProgramsPage from './pages/ProgramsPage';
 import StaffingTrainingPage from './pages/StaffingTrainingPage'; 
 import CurriculumPage from './pages/CurriculumPage';
@@ -79,7 +79,7 @@ function App() {
         <Layout>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Homepage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/staffing-training" element={<StaffingTrainingPage />} />
             <Route path="/curriculum" element={<CurriculumPage />} />
