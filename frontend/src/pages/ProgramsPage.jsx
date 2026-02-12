@@ -10,11 +10,11 @@ import {
   Sparkles,
   ShieldCheck,
   ChevronDown,
+  ChevronUp,
   X,
   Calendar,
   IndianRupee,
-  Target,
-  Award
+  Target
 } from 'lucide-react';
 
 // Context & Services
@@ -33,6 +33,12 @@ export default function ProgramsPage() {
   
   // State for the Active Modal (Popup)
   const [selectedProgram, setSelectedProgram] = useState(null);
+  // State for Accordion inside Modal
+  const [openModuleIndex, setOpenModuleIndex] = useState(null);
+
+  const toggleModule = (index) => {
+    setOpenModuleIndex(openModuleIndex === index ? null : index);
+  };
 
   useEffect(() => {
     const loadPrograms = async () => {
@@ -125,13 +131,16 @@ export default function ProgramsPage() {
       <style>{animationStyles}</style>
 
       {/* --- HERO SECTION --- */}
-      <section className="relative min-h-[80vh] flex flex-col justify-center items-center overflow-hidden bg-white pt-20 pb-10">
+      <section className="relative h-screen flex flex-col justify-center items-center overflow-hidden bg-white pt-20">
+        
+        {/* Animated Background */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
             <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
             <div className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '1.5s' }} />
         </div>
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 flex flex-col items-center justify-center h-full pb-20">
           <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-8 shadow-sm">
             <Sparkles className="w-4 h-4 text-yellow-600" />
             <span>Market-Ready Curriculum</span>
@@ -144,13 +153,15 @@ export default function ProgramsPage() {
             </span>
           </h1>
 
-          <p className="animate-fade-up delay-300 text-lg md:text-xl text-slate-600 leading-relaxed mb-10">
+          <p className="animate-fade-up delay-300 text-lg md:text-xl text-slate-600 leading-relaxed mb-10 max-w-2xl">
             Choose the right path for your career. From foundational recruitment skills to advanced talent acquisition strategies designed by industry experts.
           </p>
-          
-          <div className="animate-fade-up delay-300">
-             <ChevronDown className="w-6 h-6 text-slate-400 animate-bounce mx-auto" />
-          </div>
+        </div>
+
+        {/* Scroll Indicator - Positioned at Bottom */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Scroll to Explore</span>
+          <ChevronDown className="w-6 h-6 text-slate-400" />
         </div>
       </section>
 
@@ -166,7 +177,7 @@ export default function ProgramsPage() {
             {programs.map((program, index) => (
               <div
                 key={program._id}
-                onClick={() => setSelectedProgram(program)}
+                onClick={() => { setSelectedProgram(program); setOpenModuleIndex(null); }}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 className="animate-fade-up group cursor-pointer flex flex-col bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-2xl hover:shadow-yellow-100/50 hover:-translate-y-2 transition-all duration-300 overflow-hidden h-full"
               >
@@ -202,11 +213,11 @@ export default function ProgramsPage() {
                   {/* Actions */}
                   <div className="flex items-center justify-between mt-auto">
                      <span className="text-sm font-bold text-yellow-600 flex items-center gap-1 group-hover:gap-2 transition-all">
-                        View Details <ArrowRight size={16} />
+                        View Syllabus <ArrowRight size={16} />
                      </span>
                      <button 
                         onClick={(e) => {
-                            e.stopPropagation(); // Prevent opening modal when clicking Enroll directly
+                            e.stopPropagation(); 
                             handleEnrollClick(program);
                         }}
                         className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
@@ -221,7 +232,7 @@ export default function ProgramsPage() {
         </div>
       </section>
 
-      {/* --- PROGRAM DETAILS MODAL (POPUP) --- */}
+      {/* --- PROGRAM DETAILS MODAL (ACCORDION STYLE) --- */}
       {selectedProgram && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
@@ -252,7 +263,7 @@ export default function ProgramsPage() {
               </div>
               
               <h3 className="text-2xl md:text-3xl font-bold mb-2">{selectedProgram.title}</h3>
-              <p className="text-slate-300 text-sm md:text-base opacity-90">{selectedProgram.description}</p>
+              <p className="text-slate-300 text-sm md:text-base opacity-90 line-clamp-2">{selectedProgram.description}</p>
             </div>
 
             {/* Modal Body (Scrollable) */}
@@ -276,23 +287,52 @@ export default function ProgramsPage() {
                     </div>
                 )}
 
-                {/* Modules List */}
+                {/* Modules List (ACCORDION) */}
                 {selectedProgram.modules && selectedProgram.modules.length > 0 && (
                     <div>
-                        <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 sticky top-0 bg-slate-50 z-10 py-2">
                            <BookOpen className="w-5 h-5 text-yellow-600" /> Course Curriculum
                         </h4>
+                        
                         <div className="space-y-3">
                             {selectedProgram.modules.map((module, idx) => (
-                                <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                                    <h5 className="font-bold text-slate-800 text-base mb-2">{module.title}</h5>
-                                    <div className="flex flex-wrap gap-2">
-                                        {module.topics && module.topics.map((topic, tIdx) => (
-                                            <span key={tIdx} className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
-                                                {topic}
+                                <div key={idx} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                                    
+                                    {/* Accordion Trigger */}
+                                    <button 
+                                        onClick={() => toggleModule(idx)}
+                                        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold border border-slate-200">
+                                                {idx + 1}
                                             </span>
-                                        ))}
-                                    </div>
+                                            <span className="font-bold text-slate-800 text-base">{module.title}</span>
+                                        </div>
+                                        {openModuleIndex === idx ? (
+                                            <ChevronUp size={18} className="text-yellow-600 flex-shrink-0" />
+                                        ) : (
+                                            <ChevronDown size={18} className="text-slate-400 flex-shrink-0" />
+                                        )}
+                                    </button>
+                                    
+                                    {/* Accordion Content */}
+                                    {openModuleIndex === idx && (
+                                        <div className="px-4 pb-4 pl-[4.5rem] bg-slate-50/50 border-t border-slate-100">
+                                            {module.topics && module.topics.length > 0 ? (
+                                                <ul className="space-y-2 mt-3">
+                                                    {module.topics.map((topic, tIdx) => (
+                                                        <li key={tIdx} className="flex items-start gap-2 text-sm text-slate-600">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+                                                            {topic}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="text-sm text-slate-400 italic mt-2">No detailed topics listed.</p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
