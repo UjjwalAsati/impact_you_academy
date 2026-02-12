@@ -21,6 +21,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 
+// Policy Pages (For Razorpay)
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import RefundPolicy from './pages/RefundPolicy';
+import ShippingPolicy from './pages/ShippingPolicy';
+
 // Dashboard & Admin Imports
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -51,15 +57,15 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1. Navbar is ALWAYS visible now */}
+      {/* Navbar is always visible */}
       <Navbar />
       
-      {/* 2. Main Content */}
+      {/* Main Content */}
       <div className="flex-grow">
         {children}
       </div>
       
-      {/* 3. Footer HIDDEN on Admin Routes */}
+      {/* Footer HIDDEN only on Admin Routes to prevent overlap */}
       {!isAdminRoute && <Footer />}
     </div>
   );
@@ -82,6 +88,12 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/payment" element={<PaymentPage />} />
+            
+            {/* Policy Routes (Razorpay Mandatory) */}
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsConditions />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />

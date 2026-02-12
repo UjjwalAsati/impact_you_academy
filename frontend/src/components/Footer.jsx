@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Twitter, Facebook
 
 export const Footer = () => {
   return (
-    <footer data-testid="site-footer" className="bg-gradient-to-br from-navy-dark via-navy to-navy-light text-white mt-auto relative overflow-hidden pt-16">
+    <footer data-testid="site-footer" className="bg-gradient-to-br from-navy-dark via-navy to-navy-light text-white mt-auto relative overflow-hidden pt-16 border-t border-white/5">
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
@@ -57,7 +57,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Updated Contact Information */}
+          {/* Contact Information */}
           <div>
             <h4 className="font-bold text-lg mb-6 heading-font flex items-center" data-testid="footer-contact-heading">
               <span className="text-gold mr-2">•</span> Contact Us
@@ -101,13 +101,12 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter & Updated Social Links */}
+          {/* Social & Legal (UPDATED FOR RAZORPAY) */}
           <div>
             <h4 className="font-bold text-lg mb-6 heading-font flex items-center" data-testid="footer-legal-heading">
               <span className="text-gold mr-2">•</span> Connect With Us
             </h4>
-            <p className="text-sm text-slate-300 mb-4">Stay updated with our latest programs and industry insights.</p>
-            <div className="flex space-x-3 mb-6">
+            <div className="flex space-x-3 mb-8">
               <a
                 href="https://www.linkedin.com/company/impact-you-academy"
                 target="_blank"
@@ -126,18 +125,15 @@ export const Footer = () => {
               >
                 <Instagram size={18} className="text-slate-300 group-hover:text-gold transition-colors" />
               </a>
-              {/* Optional Social Icons */}
-              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 flex items-center justify-center transition-all duration-300 opacity-50 hover:opacity-100">
-                <Twitter size={18} className="text-slate-300" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 flex items-center justify-center transition-all duration-300 opacity-50 hover:opacity-100">
-                <Facebook size={18} className="text-slate-300" />
-              </a>
             </div>
+
+            {/* MANDATORY POLICY LINKS */}
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Policies</h4>
             <ul className="space-y-2">
-              <li><a href="#" data-testid="footer-link-privacy" className="text-xs text-slate-400 hover:text-gold transition-colors">Privacy Policy</a></li>
-              <li><a href="#" data-testid="footer-link-terms" className="text-xs text-slate-400 hover:text-gold transition-colors">Terms of Service</a></li>
-              <li><a href="#" data-testid="footer-link-refund" className="text-xs text-slate-400 hover:text-gold transition-colors">Refund Policy</a></li>
+              <li><Link to="/privacy-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className="text-xs text-slate-400 hover:text-gold transition-colors">Terms of Service</Link></li>
+              <li><Link to="/refund-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Refund Policy</Link></li>
+              <li><Link to="/shipping-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Shipping & Delivery</Link></li>
             </ul>
           </div>
         </div>
