@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchEnrollments } from "../../services/adminEnrollmentService";
+import { fetchEnrollments, updateEnrollmentStatus } 
+from "../../services/adminEnrollmentService";
 import { useAuth } from "../../context/AuthContext";
 
 const AdminEnrollments = () => {
