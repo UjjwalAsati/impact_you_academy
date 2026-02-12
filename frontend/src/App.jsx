@@ -1,11 +1,14 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route,useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Toaster } from './components/ui/sonner';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+
+// Page Imports
 import HomePage from './pages/HomePage';
 import ProgramsPage from './pages/ProgramsPage';
+import StaffingTrainingPage from './pages/StaffingTrainingPage'; 
 import CurriculumPage from './pages/CurriculumPage';
 import PracticalTrainingPage from './pages/PracticalTrainingPage';
 import CertificationPage from './pages/CertificationPage';
@@ -14,18 +17,23 @@ import ContactPage from './pages/ContactPage';
 import PaymentPage from './pages/PaymentPage';
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import AdminRoute from "./routes/AdminRoute";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+
+// Dashboard & Admin Imports
+import UserDashboard from "./pages/dashboard/UserDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPrograms from "./pages/admin/AdminPrograms";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEnrollments from "./pages/admin/AdminEnrollments";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminInquiries from "./pages/admin/AdminInquiries";
-import UserDashboard from "./pages/dashboard/UserDashboard";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import VerifyEmail from "./pages/VerifyEmail";
+
+// Route Guards
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminRoute from "./routes/AdminRoute";
+
 function ScrollHandler() {
   const { pathname } = useLocation();
 
@@ -35,26 +43,34 @@ function ScrollHandler() {
 
   return null;
 }
+
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      <ScrollHandler/>
+        <ScrollHandler/>
         <Navbar />
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/programs" element={<ProgramsPage />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* NEW ROUTE ADDED HERE */}
+          <Route path="/staffing-training" element={<StaffingTrainingPage />} />
+          
           <Route path="/curriculum" element={<CurriculumPage />} />
           <Route path="/practical-training" element={<PracticalTrainingPage />} />
           <Route path="/certification" element={<CertificationPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          
+          {/* Auth Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
           {/* USER PROTECTED */}
           <Route

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LogOut, User, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Navbar = () => {
@@ -23,6 +23,8 @@ export const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/programs', label: 'Programs' },
+    // ADDED NEW LINK HERE
+    { path: '/staffing-training', label: 'Staffing' },
     { path: '/curriculum', label: 'Curriculum' },
     { path: '/practical-training', label: 'Training' }, 
     { path: '/certification', label: 'Certification' },
@@ -66,7 +68,8 @@ export const Navbar = () => {
           </Link>
 
           {/* --- CENTER: Navigation Links (Desktop) --- */}
-          <div className="hidden lg:flex items-center justify-center space-x-8">
+          {/* Added 'hidden lg:flex' to hide on mobile/tablet, show on large screens */}
+          <div className="hidden lg:flex items-center justify-center space-x-6"> 
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -97,7 +100,7 @@ export const Navbar = () => {
               </Link>
             )}
 
-            {/* RESTORED: Dashboard Link (Missing in new code) */}
+            {/* RESTORED: Dashboard Link */}
             {isAuthenticated && !isAdmin && (
               <Link
                 to="/dashboard"
@@ -111,7 +114,7 @@ export const Navbar = () => {
           </div>
 
           {/* --- RIGHT: Action Buttons (Desktop) --- */}
-          <div className="hidden lg:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-4 ml-4">
             {!isAuthenticated ? (
               <>
                 <Link 
