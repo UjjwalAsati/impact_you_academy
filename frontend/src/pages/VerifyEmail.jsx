@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
@@ -7,11 +7,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function VerifyEmail() {
   const { token } = useParams();
   const navigate = useNavigate();
+  const hasVerified = useRef(false); // ✅ prevents double execution
 
-  const [status, setStatus] = useState("loading"); 
+  const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("Verifying your email...");
 
   useEffect(() => {
+    if (hasVerified.current) return; // 🛑 stop second call
+    hasVerified.current = true;
+
     const verify = async () => {
       try {
         const res = await fetch(
