@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const UserDashboard = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { addToCart } = useCart(); // Use cart to retry payment
   const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState([]);
@@ -28,7 +28,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchMyEnrollments();
+        const data = await fetchMyEnrollments(token);
         setEnrollments(data);
       } catch (error) {
         console.error("Failed to load enrollments", error);
@@ -37,7 +37,7 @@ const UserDashboard = () => {
       }
     };
     load();
-  }, []);
+  }, [token]);
 
   // --- 2. HANDLERS ---
   const handleCompletePayment = (enrollment) => {
