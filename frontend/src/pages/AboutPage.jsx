@@ -117,7 +117,7 @@ export default function AboutPage() {
       <style>{animationStyles}</style>
 
       {/* --- HERO SECTION --- */}
-      <section className="relative min-h-[85vh] flex flex-col justify-center bg-white pt-24 pb-12">
+      <section className="relative min-h-[90vh] flex flex-col bg-white pt-24 pb-8">
         
         {/* Background Gradients (Rotating Slowly) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none animate-rotate-slow origin-center opacity-70">
@@ -125,8 +125,8 @@ export default function AboutPage() {
             <div className="absolute bottom-[0%] right-[-20%] w-[800px] h-[800px] bg-yellow-50/60 rounded-full blur-3xl mix-blend-multiply animate-float-fast" style={{ animationDelay: '2s' }} />
         </div>
 
-        {/* Content Container */}
-        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center my-auto">
+        {/* Content Container - Pushed lower with mt-12 md:mt-24 lg:mt-32 */}
+        <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-12 md:mt-24 lg:mt-32 mb-auto">
           
           <div className="animate-zoom-in delay-100 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 text-sm font-bold mb-8 shadow-sm hover:shadow-md transition-shadow">
             <Sparkles className="w-4 h-4 text-yellow-600" />
@@ -146,14 +146,17 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-60 animate-bounce mb-4 flex-shrink-0 cursor-pointer group" onClick={() => window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })}>
+        {/* Scroll Indicator - Pinned to absolute bottom using mt-auto */}
+        <div 
+          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-60 animate-bounce mt-auto pb-4 cursor-pointer group" 
+          onClick={() => window.scrollTo({ top: window.innerHeight * 0.9, behavior: 'smooth' })}
+        >
           <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] group-hover:text-yellow-600 transition-colors">Explore</span>
           <ChevronDown className="text-slate-400 w-5 h-5 group-hover:text-yellow-600 transition-colors" />
         </div>
       </section>
 
-      {/* --- DIRECTOR'S IDEOLOGY SECTION (COMPRESSED) --- */}
+      {/* --- DIRECTOR'S IDEOLOGY SECTION --- */}
       <section className="py-16 lg:py-20 bg-white relative z-10 overflow-hidden border-y border-slate-100">
         
         {/* Floating Decorative Elements */}
@@ -236,7 +239,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- ABOUT THE DIRECTOR SECTION (COMPRESSED & FIXED IMAGE) --- */}
+      {/* --- ABOUT THE DIRECTOR SECTION --- */}
       <section className="py-20 lg:py-24 bg-slate-950 text-white relative overflow-hidden">
          {/* Background Accents */}
          <div className="absolute inset-0 animate-rotate-slow opacity-20 mix-blend-soft-light pointer-events-none">
@@ -248,8 +251,8 @@ export default function AboutPage() {
           
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-16">
             
-            {/* Left: Director Image (FIXED: object-top & optimized width) */}
-            <div className="w-full lg:w-5/12 flex justify-center lg:justify-end animate-fade-right">
+            {/* Left: Director Image (pushed down with lg:mt-28 to align with body text) */}
+            <div className="w-full lg:w-5/12 flex justify-center lg:justify-end animate-fade-right lg:mt-28">
               {/* Aspect Ratio Container */}
               <div className="relative w-full max-w-[300px] md:max-w-[340px] aspect-[4/5] group">
                 
@@ -261,7 +264,6 @@ export default function AboutPage() {
                     <img 
                       src="/doorva.jpg" 
                       alt="Doorva Juaria - Founder & Director" 
-                      // FIX: Added object-top so the head doesn't get cut off!
                       className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     {/* Dark gradient overlay for text readability */}
@@ -278,7 +280,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Right: Detailed Content (Compressed Spacing) */}
+            {/* Right: Detailed Content */}
             <div className="w-full lg:w-7/12 text-left animate-fade-left delay-200">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-yellow-400 text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-md shadow-lg">
                 <BookOpen size={14} /> Meet The Director
@@ -292,7 +294,6 @@ export default function AboutPage() {
                 CHRO | Advocate, High Court of M.P.
               </h3>
               
-              {/* Tighter line heights and reduced margins */}
               <div className="space-y-4 text-slate-300 leading-relaxed text-sm md:text-base font-light">
                 <p>
                   Doorva Juaria embodies a sophisticated intersection of courtroom advocacy, corporate governance, and academic mentorship. With a foundational background in <strong className="text-white font-semibold">BBA LL.B (Hons.)</strong> and an <strong className="text-white font-semibold">LL.M in Criminal Law</strong>, complemented by specialized expertise in Cyber Law and Human Psychology, she offers a multi-dimensional perspective on modern organizational challenges.
