@@ -27,21 +27,31 @@ const AdminEnrollments = () => {
   }, [token]);
 
   const calculateDaysLeft = (createdAt, duration) => {
-    if (!duration) return <span className="text-slate-400">-</span>;
-    const weeksMatch = duration.match(/\d+/);
-    if (!weeksMatch) return "-";
-    const totalDays = Number(weeksMatch[0]) * 7;
-    const passed = Math.floor(
-      (new Date() - new Date(createdAt)) / (1000 * 60 * 60 * 24)
-    );
-    const left = totalDays - passed;
+  if (!duration) return <span className="text-slate-400">-</span>;
 
-    return left > 0 ? (
-      <span className="text-slate-600 font-medium">{left} Days</span>
-    ) : (
-      <span className="text-green-600 font-bold">Completed</span>
-    );
+  const numberMatch = duration.match(/\d+/);
+  if (!numberMatch) return "-";
+
+  let totalDays = Number(numberMatch[0]);
+
+  const lower = duration.toLowerCase();
+
+  if (lower.includes("week")) totalDays *= 7;
+  if (lower.includes("month")) totalDays *= 30;
+
+  const passed = Math.floor(
+    (new Date() - new Date(createdAt)) / (1000 * 60 * 60 * 24)
+  );
+
+  const left = totalDays - passed;
+
+  return left > 0 ? (
+    <span className="text-slate-600 font-medium">{left} Days</span>
+  ) : (
+    <span className="text-green-600 font-bold">Completed</span>
+  );
   };
+
 
   const getStatusBadge = (status) => {
     const normalized = status?.toLowerCase();
@@ -62,26 +72,56 @@ const AdminEnrollments = () => {
       </span>
     );
   };
-  const handleStatusUpdate = async (id, currentStatus) => {
+  const handleStatusUpdate = async (enrollment) => {
     try {
+      const currentStatus = enrollment.status.toLowerCase();
       let newStatus;
 
-      if (currentStatus.toLowerCase() === "pending") {
+      if (currentStatus === "pending") {
         newStatus = "active";
-      } else if (currentStatus.toLowerCase() === "active") {
+      } else if (currentStatus === "active") {
+
+        // 🔥 prevent early completion
+        const numberMatch = enrollment.program?.duration?.match(/\d+/);
+        if (numberMatch) {
+          let totalDays = Number(numberMatch[0]);
+
+          const lower = enrollment.program.duration.toLowerCase();
+          if (lower.includes("week")) totalDays *= 7;
+          if (lower.includes("month")) totalDays *= 30;
+
+          const passed = Math.floor(
+            (new Date() - new Date(enrollment.createdAt)) /
+              (1000 * 60 * 60 * 24)
+          );
+
+          if (passed < totalDays) {
+            alert("Course duration is not completed yet.");
+            return;
+          }
+        }
+
         newStatus = "completed";
       } else {
         return;
       }
 
-      await updateEnrollmentStatus(id, newStatus, token);
+      const confirmAction = window.confirm(
+        `Are you sure you want to mark this enrollment as ${newStatus}?`
+      );
 
-      // Reload enrollments after update
+      if (!confirmAction) return;
+
+      await updateEnrollmentStatus(enrollment._id, newStatus, token);
       loadEnrollments();
+
     } catch (err) {
       console.error("Status update failed:", err);
     }
+    console.log(enrollments);
+
   };
+
 
   return (
     <div className="space-y-8 pb-10">
@@ -179,9 +219,7 @@ const AdminEnrollments = () => {
                     <td className="px-6 py-4 text-right">
                     {en.status?.toLowerCase() !== "completed" && (
                       <button
-                        onClick={() =>
-                          handleStatusUpdate(en._id, en.status)
-                        }
+                        onClick={() => handleStatusUpdate(en)}
                         className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
                       >
                         Mark{" "}

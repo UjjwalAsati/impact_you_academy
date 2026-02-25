@@ -55,13 +55,18 @@ exports.getMyEnrollments = async (req, res) => {
  * ADMIN: Get all enrollments
  */
 exports.getAllEnrollments = async (req, res) => {
-  const enrollments = await Enrollment.find()
-    .populate('user', 'name email')
-    .populate('program', 'title price')
-    .sort({ createdAt: -1 });
+  try {
+    const enrollments = await Enrollment.find()
+      .populate('user', 'name email')
+      .populate('program', 'title duration price')
+      .sort({ createdAt: -1 });
 
-  res.json(enrollments);
+    res.json(enrollments);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch enrollments" });
+  }
 };
+
 
 /**
  * ADMIN: Update enrollment status
