@@ -51,11 +51,6 @@ export default function AboutPage() {
       50% { transform: translateY(-20px) rotate(-3deg); }
       100% { transform: translateY(0px) rotate(0deg); }
     }
-    /* Slow Rotation for Backgrounds */
-    @keyframes rotate-slow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
     /* Glowing Pulse */
     @keyframes pulse-glow {
       0%, 100% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3); border-color: rgba(234, 179, 8, 0.4); }
@@ -70,7 +65,6 @@ export default function AboutPage() {
     
     .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
     .animate-float-fast { animation: float-fast 5s ease-in-out infinite; }
-    .animate-rotate-slow { animation: rotate-slow 120s linear infinite; }
     .animate-glow { animation: pulse-glow 4s infinite ease-in-out; }
     
     /* Stagger Delays */
@@ -120,10 +114,10 @@ export default function AboutPage() {
       {/* --- HERO SECTION --- */}
       <section className="relative h-screen flex flex-col justify-center items-center bg-white overflow-hidden pt-16">
         
-        {/* Background Gradients (Rotating Slowly) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none animate-rotate-slow origin-center opacity-70">
-            <div className="absolute top-[0%] left-[-20%] w-[800px] h-[800px] bg-blue-50/60 rounded-full blur-3xl mix-blend-multiply animate-float-slow" />
-            <div className="absolute bottom-[0%] right-[-20%] w-[800px] h-[800px] bg-yellow-50/60 rounded-full blur-3xl mix-blend-multiply animate-float-fast" style={{ animationDelay: '2s' }} />
+        {/* Background Gradients (Fixed positioning & boosted colors for visibility) */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-blue-100/60 rounded-full blur-[100px] mix-blend-multiply animate-float-slow" />
+            <div className="absolute bottom-[-10%] right-[-5%] w-[600px] md:w-[900px] h-[600px] md:h-[900px] bg-yellow-100/70 rounded-full blur-[120px] mix-blend-multiply animate-float-fast" style={{ animationDelay: '1s' }} />
         </div>
 
         {/* Content Container - Perfectly Centered */}
@@ -147,12 +141,15 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Scroll Indicator - Absolute Bottom */}
+        {/* Scroll Indicator - Absolute Bottom, Perfectly Centered */}
         <div 
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-fade-up delay-500 flex flex-col items-center gap-2 opacity-60 animate-bounce cursor-pointer group" 
+          className="absolute bottom-10 left-0 right-0 z-20 animate-fade-up delay-500 flex flex-col items-center justify-center gap-2 opacity-60 animate-bounce cursor-pointer group" 
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] group-hover:text-yellow-600 transition-colors">Explore</span>
+          {/* pl-[0.2em] offsets the tracking space so it stays visually dead-center */}
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] pl-[0.2em] group-hover:text-yellow-600 transition-colors text-center">
+            Explore
+          </span>
           <ChevronDown className="text-slate-400 w-5 h-5 group-hover:text-yellow-600 transition-colors" />
         </div>
       </section>
@@ -243,9 +240,9 @@ export default function AboutPage() {
       {/* --- ABOUT THE DIRECTOR SECTION --- */}
       <section className="py-20 lg:py-24 bg-slate-950 text-white relative overflow-hidden">
          {/* Background Accents */}
-         <div className="absolute inset-0 animate-rotate-slow opacity-20 mix-blend-soft-light pointer-events-none">
-             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-yellow-600 rounded-full blur-[120px]" />
-             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-700 rounded-full blur-[120px]" />
+         <div className="absolute inset-0 opacity-20 mix-blend-soft-light pointer-events-none">
+             <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-yellow-600 rounded-full blur-[120px] animate-float-slow" />
+             <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-700 rounded-full blur-[120px] animate-float-fast" />
          </div>
          
         <div className="container-custom px-4 mx-auto max-w-6xl relative z-10">
