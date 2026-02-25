@@ -40,7 +40,13 @@ export default function AboutPage() {
         to { opacity: 1; transform: scale(1); }
     }
 
-    /* Floating Animations */
+    /* Standard Float for Hero */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    /* Floating Animations for Decor */
     @keyframes float-slow {
       0% { transform: translateY(0px) rotate(0deg); }
       50% { transform: translateY(-15px) rotate(2deg); }
@@ -63,15 +69,16 @@ export default function AboutPage() {
     .animate-fade-right { animation: fadeRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
     .animate-zoom-in { animation: zoomIn 1s ease-out forwards; opacity: 0; }
     
+    .animate-float { animation: float 3s ease-in-out infinite; }
     .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
     .animate-float-fast { animation: float-fast 5s ease-in-out infinite; }
     .animate-glow { animation: pulse-glow 4s infinite ease-in-out; }
     
     /* Stagger Delays */
-    .delay-100 { animation-delay: 0.15s; }
-    .delay-200 { animation-delay: 0.3s; }
-    .delay-300 { animation-delay: 0.45s; }
-    .delay-500 { animation-delay: 0.6s; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
 
     /* Premium Card Hover States */
     .card-hover {
@@ -111,46 +118,44 @@ export default function AboutPage() {
     <div data-testid="about-page" className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100 overflow-hidden">
       <style>{animationStyles}</style>
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative h-screen flex flex-col justify-center items-center bg-white overflow-hidden pt-16">
+      {/* --- HERO SECTION (Matched to CertificationPage Code) --- */}
+      <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-32 pb-10">
         
-        {/* Background Gradients (Fixed positioning & boosted colors for visibility) */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-blue-100/60 rounded-full blur-[100px] mix-blend-multiply animate-float-slow" />
-            <div className="absolute bottom-[-10%] right-[-5%] w-[600px] md:w-[900px] h-[600px] md:h-[900px] bg-yellow-100/70 rounded-full blur-[120px] mix-blend-multiply animate-float-fast" style={{ animationDelay: '1s' }} />
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
+            <div className="absolute top-[10%] right-[-10%] w-[600px] h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
+            <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '1.5s' }} />
         </div>
 
-        {/* Content Container - Perfectly Centered */}
-        <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-4 sm:px-6 text-center -mt-10">
+        {/* Content Container */}
+        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           
-          <div className="animate-zoom-in delay-100 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 text-sm font-bold mb-8 shadow-sm hover:shadow-md transition-shadow">
+          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-8 shadow-sm">
             <Sparkles className="w-4 h-4 text-yellow-600" />
-            <span className="tracking-wide">Law Meets Leadership</span>
+            <span>Law Meets Leadership</span>
           </div>
 
-          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-            About <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-700 drop-shadow-sm">
+          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
+            About <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
               Impact You Academy
             </span>
           </h1>
 
-          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed font-medium">
+          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed">
             Law with structure. HR with strategy. Leadership with integrity. <br className="hidden md:block"/>
             We bridge the critical gap between theoretical education and industry compliance.
           </p>
         </div>
 
-        {/* Scroll Indicator - Absolute Bottom, Perfectly Centered */}
+        {/* Scroll Indicator */}
         <div 
-          className="absolute bottom-10 left-0 right-0 z-20 animate-fade-up delay-500 flex flex-col items-center justify-center gap-2 opacity-60 animate-bounce cursor-pointer group" 
+          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce mt-12 flex-shrink-0 cursor-pointer"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
-          {/* pl-[0.2em] offsets the tracking space so it stays visually dead-center */}
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] pl-[0.2em] group-hover:text-yellow-600 transition-colors text-center">
-            Explore
-          </span>
-          <ChevronDown className="text-slate-400 w-5 h-5 group-hover:text-yellow-600 transition-colors" />
+          {/* pl-[0.1em] precisely offsets the letter-spacing to make it visually centered */}
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest pl-[0.1em]">Explore</span>
+          <ChevronDown className="text-slate-400" />
         </div>
       </section>
 
