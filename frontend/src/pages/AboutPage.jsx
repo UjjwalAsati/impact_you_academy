@@ -77,6 +77,7 @@ export default function AboutPage() {
     .delay-100 { animation-delay: 0.15s; }
     .delay-200 { animation-delay: 0.3s; }
     .delay-300 { animation-delay: 0.45s; }
+    .delay-500 { animation-delay: 0.6s; }
 
     /* Premium Card Hover States */
     .card-hover {
@@ -117,7 +118,7 @@ export default function AboutPage() {
       <style>{animationStyles}</style>
 
       {/* --- HERO SECTION --- */}
-      <section className="relative min-h-[90vh] flex flex-col bg-white pt-24 pb-8">
+      <section className="relative h-screen flex flex-col justify-center items-center bg-white overflow-hidden pt-16">
         
         {/* Background Gradients (Rotating Slowly) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none animate-rotate-slow origin-center opacity-70">
@@ -125,31 +126,31 @@ export default function AboutPage() {
             <div className="absolute bottom-[0%] right-[-20%] w-[800px] h-[800px] bg-yellow-50/60 rounded-full blur-3xl mix-blend-multiply animate-float-fast" style={{ animationDelay: '2s' }} />
         </div>
 
-        {/* Content Container - Pushed lower with mt-12 md:mt-24 lg:mt-32 */}
-        <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-12 md:mt-24 lg:mt-32 mb-auto">
+        {/* Content Container - Perfectly Centered */}
+        <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-4 sm:px-6 text-center -mt-10">
           
           <div className="animate-zoom-in delay-100 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 text-sm font-bold mb-8 shadow-sm hover:shadow-md transition-shadow">
             <Sparkles className="w-4 h-4 text-yellow-600" />
             <span className="tracking-wide">Law Meets Leadership</span>
           </div>
 
-          <h1 className="animate-fade-up delay-200 text-6xl md:text-7xl lg:text-8xl font-extrabold text-slate-900 tracking-tighter mb-8 leading-none">
-            About <br />
+          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+            About <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-700 drop-shadow-sm">
               Impact You Academy
             </span>
           </h1>
 
-          <p className="animate-fade-up delay-300 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed font-medium">
+          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed font-medium">
             Law with structure. HR with strategy. Leadership with integrity. <br className="hidden md:block"/>
             We bridge the critical gap between theoretical education and industry compliance.
           </p>
         </div>
 
-        {/* Scroll Indicator - Pinned to absolute bottom using mt-auto */}
+        {/* Scroll Indicator - Absolute Bottom */}
         <div 
-          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-60 animate-bounce mt-auto pb-4 cursor-pointer group" 
-          onClick={() => window.scrollTo({ top: window.innerHeight * 0.9, behavior: 'smooth' })}
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-fade-up delay-500 flex flex-col items-center gap-2 opacity-60 animate-bounce cursor-pointer group" 
+          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
           <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] group-hover:text-yellow-600 transition-colors">Explore</span>
           <ChevronDown className="text-slate-400 w-5 h-5 group-hover:text-yellow-600 transition-colors" />
@@ -251,8 +252,8 @@ export default function AboutPage() {
           
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-16">
             
-            {/* Left: Director Image (pushed down with lg:mt-28 to align with body text) */}
-            <div className="w-full lg:w-5/12 flex justify-center lg:justify-end animate-fade-right lg:mt-28">
+            {/* Left: Director Image */}
+            <div className="w-full lg:w-5/12 flex justify-center lg:justify-end animate-fade-right lg:mt-24">
               {/* Aspect Ratio Container */}
               <div className="relative w-full max-w-[300px] md:max-w-[340px] aspect-[4/5] group">
                 
