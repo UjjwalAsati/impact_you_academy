@@ -183,7 +183,7 @@ const Terminal2 = ({ t }) => {
     skills: ['▸ Node.js & Express.js  ▸ MongoDB & Mongoose','▸ REST API Design       ▸ JWT Authentication','▸ Razorpay Payments     ▸ Nodemailer OTP','▸ Multer File Uploads   ▸ bcrypt Security','▸ RBAC Middleware       ▸ API Rate Limiting'],
     stack: ['  Runtime   → Node.js v20','  Framework → Express.js 4.x','  Database  → MongoDB Atlas (M10 cluster)','  ODM       → Mongoose 8.x','  Auth      → JWT + bcrypt + refresh tokens','  Payments  → Razorpay (orders + webhooks)','  Email     → Nodemailer + Gmail OAuth','  Storage   → Multer + Cloudinary','  Deploy    → Render / Railway / Vercel'],
     projects: ['► Impact You Academy — Production Backend','  ✓ Complete auth system (6 endpoints)','  ✓ Program & enrollment management','  ✓ Live Razorpay payment integration','  ✓ Admin dashboard API (protected)','  ✓ Email OTP verification system','  ✓ Role-based access control (2 roles)','  ✓ Contact form + inquiry storage'],
-    contact: ['📧  ujjwalasati@gmail.com','🔗  linkedin.com/in/ujjwal-asati-20527828b','🐙  github.com/UjjwalAsati','📍  Available · Remote-first · Freelance OK'],
+    contact: ['📧  ujjwal4.asati4@gmail.com','🔗  linkedin.com/in/ujjwal-asati-20527828b','🐙  github.com/UjjwalAsati','📍  Available · Remote-first · Freelance OK'],
     education: ['B.Tech — Computer Science & Engineering','> Practical builder. Real-world > textbooks.','> 0 to production in record time.'],
     ping: ['PING ujjwal.dev (172.67.x.x)', '64 bytes: icmp_seq=0 ttl=55 time=0.31ms','64 bytes: icmp_seq=1 ttl=55 time=0.28ms','Server alive · uptime: 99.9% ✓'],
     'git log': ['d3adb33  feat: razorpay webhook verification','c0ffee1  fix: JWT refresh token race condition','b4dc0de  feat: admin inquiry management API','deadf00  feat: email OTP with expiry logic','c4f3b4b  refactor: middleware chain cleanup','0ff1ce0  chore: rate limiting on auth routes'],
@@ -802,7 +802,7 @@ export default function DevelopersPage() {
                 {[
                   { href: 'https://www.linkedin.com/in/ujjwal-asati-20527828b/', icon: <Linkedin size={13} />, label: 'LinkedIn', c: t.ua },
                   { href: 'https://github.com/UjjwalAsati', icon: <Github size={13} />, label: 'GitHub', c: t.textSub },
-                  { href: 'mailto:ujjwalasati@gmail.com', icon: <Mail size={13} />, label: 'Email', c: t.textSub },
+                  { href: 'mailto:ujjwal4.asati4@gmail.com', icon: <Mail size={13} />, label: 'Email', c: t.textSub },
                 ].map(lk => (
                   <a key={lk.href} href={lk.href} target={lk.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
                     className="btn-flow flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold"
