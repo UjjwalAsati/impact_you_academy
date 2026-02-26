@@ -138,22 +138,28 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* BOTTOM BAR: Copyright | Taskup Badge | Developers */}
-        <div className="border-t border-white/10 pt-8 mt-4">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
+       {/* BOTTOM BAR: Copyright | Taskup Badge | Developers */}
+        <div className="border-t border-white/10 pt-6 mt-4 pb-6">
+          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
             
-            <p className="text-sm text-slate-400 text-center lg:text-left order-3 lg:order-1" data-testid="footer-copyright">
+            <p className="text-sm text-slate-400 text-center lg:text-left flex-1" data-testid="footer-copyright">
               © {new Date().getFullYear()} Impact You Academy. All rights reserved.
             </p>
             
-       
+            {/* POWERED BY TASKUP BADGE - Minimalistic */}
+            <div className="flex items-center justify-center space-x-2 group flex-1 cursor-default">
+              <Zap size={16} className="text-gold group-hover:scale-110 transition-transform" />
+              <span className="text-sm text-slate-400 font-medium group-hover:text-slate-300 transition-colors">
+                Powered by <span className="font-bold text-white tracking-wide group-hover:text-gold transition-colors">TASKUP</span>
+              </span>
+            </div>
             
             {/* MEET THE DEVELOPERS LINK */}
-            <p className="text-xs text-slate-500 flex items-center gap-1.5 order-2 lg:order-3">
+            <p className="text-sm text-slate-400 flex items-center justify-center lg:justify-end gap-1.5 flex-1">
               Crafted with <span className="text-gold animate-pulse">♥</span> by our{' '}
               <Link 
                 to="/developers" 
-                className="text-slate-300 hover:text-gold font-semibold transition-colors border-b border-transparent hover:border-gold pb-0.5"
+                className="text-white hover:text-gold font-semibold transition-colors"
               >
                 Developers
               </Link>
@@ -165,4 +171,3 @@ export const Footer = () => {
     </footer>
   );
 };
-
