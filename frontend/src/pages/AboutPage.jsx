@@ -12,7 +12,8 @@ import {
   GraduationCap,
   Gavel,
   BookOpen,
-  Landmark
+  Landmark,
+  Zap
 } from 'lucide-react';
 
 export default function AboutPage() {
@@ -79,6 +80,7 @@ export default function AboutPage() {
     .delay-200 { animation-delay: 0.2s; }
     .delay-300 { animation-delay: 0.3s; }
     .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
 
     /* Premium Card Hover States */
     .card-hover {
@@ -95,7 +97,6 @@ export default function AboutPage() {
     .stat-hover:hover { transform: translateY(-3px); background-color: rgba(30, 41, 59, 0.8); }
   `;
 
-  // Core Commitments Data
   const commitments = [
     {
       icon: <Scale className="w-10 h-10 text-yellow-600 group-hover:scale-110 transition-transform duration-500" />,
@@ -118,7 +119,7 @@ export default function AboutPage() {
     <div data-testid="about-page" className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100 overflow-hidden">
       <style>{animationStyles}</style>
 
-      {/* --- HERO SECTION (Matched to CertificationPage Code) --- */}
+      {/* --- HERO SECTION --- */}
       <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-32 pb-10">
         
         {/* Background Gradients */}
@@ -146,14 +147,26 @@ export default function AboutPage() {
             Law with structure. HR with strategy. Leadership with integrity. <br className="hidden md:block"/>
             We bridge the critical gap between theoretical education and industry compliance.
           </p>
+
+          {/* POWERED BY TASKUP BADGE (Animated, Non-Clickable) */}
+          <div className="animate-fade-up delay-400 mt-10">
+            <div className="group inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(234,179,8,0.15)] hover:border-yellow-300 transition-all duration-300 hover:-translate-y-1 cursor-default">
+              <div className="bg-slate-100 p-1.5 rounded-full group-hover:bg-yellow-500 transition-colors duration-300">
+                <Zap className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors duration-300" />
+              </div>
+              <span className="text-sm font-medium text-slate-500">
+                Powered by <span className="font-extrabold text-slate-900 group-hover:text-yellow-600 transition-colors duration-300 tracking-wide">TASKUP</span>
+              </span>
+            </div>
+          </div>
+
         </div>
 
         {/* Scroll Indicator */}
         <div 
-          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce mt-12 flex-shrink-0 cursor-pointer"
+          className="relative z-10 animate-fade-up delay-500 flex flex-col items-center gap-2 opacity-50 animate-bounce mt-12 flex-shrink-0 cursor-pointer"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
-          {/* pl-[0.1em] precisely offsets the letter-spacing to make it visually centered */}
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest pl-[0.1em]">Explore</span>
           <ChevronDown className="text-slate-400" />
         </div>
