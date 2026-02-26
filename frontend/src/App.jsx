@@ -89,6 +89,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/developers" element={<DeveloperPage />} />
             
             {/* Policy Routes (Razorpay Mandatory) */}
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
