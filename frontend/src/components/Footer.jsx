@@ -101,7 +101,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Social & Legal (UPDATED FOR RAZORPAY) */}
+          {/* Social & Legal */}
           <div>
             <h4 className="font-bold text-lg mb-6 heading-font flex items-center" data-testid="footer-legal-heading">
               <span className="text-gold mr-2">•</span> Connect With Us
@@ -143,9 +143,18 @@ export const Footer = () => {
             <p className="text-sm text-slate-400" data-testid="footer-copyright">
               © {new Date().getFullYear()} Impact You Academy. All rights reserved.
             </p>
-            <p className="text-xs text-slate-500">
-              Crafted with <span className="text-gold">♥</span> for aspiring recruitment professionals
+            
+            {/* ADDED DEVELOPERS LINK HERE */}
+            <p className="text-xs text-slate-500 flex items-center gap-1.5">
+              Crafted with <span className="text-gold">♥</span> by our{' '}
+              <Link 
+                to="/developers" 
+                className="text-slate-300 hover:text-gold font-semibold transition-colors border-b border-transparent hover:border-gold pb-0.5"
+              >
+                Developers
+              </Link>
             </p>
+            
           </div>
         </div>
       </div>
