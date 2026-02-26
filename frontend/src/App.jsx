@@ -20,7 +20,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
-import DeveloperPage from './pages/DevelopersPage';
+import DeveloperPage from './pages/DeveloperPage';
 
 // Policy Pages (For Razorpay)
 import PrivacyPolicy from './pages/PrivacyPolicy';
