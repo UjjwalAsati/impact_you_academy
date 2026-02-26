@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Twitter, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Zap } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -138,15 +138,27 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-slate-400" data-testid="footer-copyright">
+        {/* BOTTOM BAR: Copyright | Taskup Badge | Developers */}
+        <div className="border-t border-white/10 pt-8 mt-4">
+          <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
+            
+            <p className="text-sm text-slate-400 text-center lg:text-left order-3 lg:order-1" data-testid="footer-copyright">
               © {new Date().getFullYear()} Impact You Academy. All rights reserved.
             </p>
             
-            {/* ADDED DEVELOPERS LINK HERE */}
-            <p className="text-xs text-slate-500 flex items-center gap-1.5">
-              Crafted with <span className="text-gold">♥</span> by our{' '}
+            {/* POWERED BY TASKUP BADGE */}
+            <div className="order-1 lg:order-2 flex items-center space-x-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+              <Zap size={14} className="text-gold group-hover:scale-110 transition-transform" />
+              <span className="text-xs text-slate-400 font-medium">Powered by</span>
+              {/* Replace '#' with the actual link to Taskup if you have one */}
+              <a href="#" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-white group-hover:text-gold transition-colors tracking-wide">
+                TASKUP
+              </a>
+            </div>
+            
+            {/* MEET THE DEVELOPERS LINK */}
+            <p className="text-xs text-slate-500 flex items-center gap-1.5 order-2 lg:order-3">
+              Crafted with <span className="text-gold animate-pulse">♥</span> by our{' '}
               <Link 
                 to="/developers" 
                 className="text-slate-300 hover:text-gold font-semibold transition-colors border-b border-transparent hover:border-gold pb-0.5"
