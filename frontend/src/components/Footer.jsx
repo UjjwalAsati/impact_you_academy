@@ -146,15 +146,7 @@ export const Footer = () => {
               © {new Date().getFullYear()} Impact You Academy. All rights reserved.
             </p>
             
-            {/* POWERED BY TASKUP BADGE */}
-            <div className="order-1 lg:order-2 flex items-center space-x-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-              <Zap size={14} className="text-gold group-hover:scale-110 transition-transform" />
-              <span className="text-xs text-slate-400 font-medium">Powered by</span>
-              {/* Replace '#' with the actual link to Taskup if you have one */}
-              <a href="#" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-white group-hover:text-gold transition-colors tracking-wide">
-                TASKUP
-              </a>
-            </div>
+       
             
             {/* MEET THE DEVELOPERS LINK */}
             <p className="text-xs text-slate-500 flex items-center gap-1.5 order-2 lg:order-3">
@@ -173,3 +165,4 @@ export const Footer = () => {
     </footer>
   );
 };
+
