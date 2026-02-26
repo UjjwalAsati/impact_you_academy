@@ -605,7 +605,7 @@ export default function DevelopersPage() {
 
       {/* CREATIVE THEME TOGGLE — FIXED: Applied inline zIndex to guarantee visibility */}
       <div ref={togRef} className="fixed"
-        style={{ zIndex: 9999, top: 24, right: 24, transform: `translate(${togPos.x}px,${togPos.y}px)`, transition: 'transform 0.25s cubic-bezier(0.23,1,0.32,1)' }}>
+        style={{ zIndex: 9999, top: 96, right: 24, transform: `translate(${togPos.x}px,${togPos.y}px)`, transition: 'transform 0.25s cubic-bezier(0.23,1,0.32,1)' }}>
         <button
           onClick={() => setTheme(t.id === 'dark' ? T.light : T.dark)}
           aria-label="Toggle theme"
