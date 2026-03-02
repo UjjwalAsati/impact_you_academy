@@ -20,7 +20,8 @@ import {
   ChevronDown, 
   MessageSquare,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -122,53 +123,61 @@ export default function ContactPage() {
     }
   };
 
+  const scrollToContact = () => {
+    document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div data-testid="contact-page" className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100">
       <style>{animationStyles}</style>
 
-      {/* --- HERO SECTION (Full Screen Flex) --- */}
-      <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-32 pb-10">
+      {/* --- HERO SECTION --- */}
+      <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-24 md:pt-32 pb-10">
         
         {/* Background Gradients */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
-            <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
-            <div className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '1.5s' }} />
+            <div className="absolute top-[10%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
+            <div className="absolute bottom-[10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '1.5s' }} />
         </div>
 
         {/* Content Container */}
-        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-12 md:mt-0">
           
-          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-8 shadow-sm">
+          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-6 md:mb-8 shadow-sm">
             <Sparkles className="w-4 h-4 text-yellow-600" />
             <span>We're Here to Help</span>
           </div>
 
-          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
+          <h1 className="animate-fade-up delay-200 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 md:mb-8 leading-tight">
             Let's Start Your <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
               Career Journey
             </span>
           </h1>
 
-          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed">
+          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed px-4">
             Connect with our program advisors to discuss your career objectives, learn about our training programs, or schedule a consultation.
           </p>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-50 animate-bounce mt-12 flex-shrink-0">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Get In Touch</span>
-          <ChevronDown className="text-slate-400" />
-        </div>
+        <button 
+          onClick={scrollToContact}
+          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity animate-bounce mt-8 md:mt-12 flex-shrink-0 cursor-pointer pb-8"
+          aria-label="Scroll to contact section"
+        >
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Get In Touch</span>
+          <ChevronDown className="text-slate-500" />
+        </button>
       </section>
 
       {/* --- CONTACT MAIN SECTION --- */}
-      <section className="py-24 bg-slate-50 relative z-10">
+      <section id="contact-section" className="py-16 md:py-24 bg-slate-50 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
             
             {/* LEFT: Contact Info */}
-            <div className="lg:col-span-1 space-y-10">
+            <div className="lg:col-span-1 space-y-8 md:space-y-10">
               <div>
                 <h2 className="text-3xl font-bold text-slate-900 mb-4">
                   Get in Touch
@@ -178,60 +187,95 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="space-y-6">
-                <div className="group flex items-start gap-5 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <Phone size={20} />
+              <div className="space-y-4 md:space-y-6">
+                
+                {/* Phone (Clickable tel: link) */}
+                <a 
+                  href="tel:+916269391942"
+                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                    <Phone size={18} className="md:w-5 md:h-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Phone</h3>
-                    <p className="text-slate-600 font-medium">+91 (XXX) XXX-XXXX</p>
-                    <p className="text-xs text-slate-400 mt-1">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                    <p className="text-slate-600 font-medium">+91 62693 91942</p>
+                    <p className="text-xs text-slate-400 mt-1">Tap to call us directly</p>
                   </div>
-                </div>
+                </a>
 
-                <div className="group flex items-start gap-5 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <Mail size={20} />
+                {/* WhatsApp */}
+                <a 
+                  href="https://wa.me/916269391942" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-green-400 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-colors">
+                    <MessageCircle size={18} className="md:w-5 md:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 mb-1">Email</h3>
-                    <p className="text-slate-600 font-medium break-all">info@impactyouacademy.com</p>
-                    <p className="text-xs text-slate-400 mt-1">We respond within 24 hours</p>
+                    <h3 className="font-bold text-slate-900 mb-1">WhatsApp</h3>
+                    <p className="text-slate-600 font-medium">+91 62693 91942</p>
+                    <p className="text-xs text-slate-400 mt-1">Chat with us directly</p>
                   </div>
-                </div>
+                </a>
 
-                <div className="group flex items-start gap-5 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <MapPin size={20} />
+                {/* Email (Clickable mailto: link) */}
+                <a 
+                  href="mailto:impactyouacademy@gmail.com"
+                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                    <Mail size={18} className="md:w-5 md:h-5" />
+                  </div>
+                  <div className="overflow-hidden">
+                    <h3 className="font-bold text-slate-900 mb-1">Email</h3>
+                    <p className="text-slate-600 font-medium truncate sm:break-all sm:whitespace-normal">impactyouacademy@gmail.com</p>
+                    <p className="text-xs text-slate-400 mt-1">Tap to send an email</p>
+                  </div>
+                </a>
+
+                {/* Office Location (Clickable Maps link) */}
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=315+MG+Road,+Indore,+MP,+India"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                    <MapPin size={18} className="md:w-5 md:h-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Office Location</h3>
-                    <p className="text-slate-600 font-medium">
-                      Business District, Corporate Tower<br />
-                      Floor 5, City, State - 000000
+                    <p className="text-slate-600 font-medium text-sm leading-relaxed">
+                      Impact You Academy<br />
+                      3rd Floor, 315 MG Road<br />
+                      Indore – 452010, MP, India
                     </p>
+                    <p className="text-xs text-slate-400 mt-2">Tap to view on Google Maps</p>
                   </div>
-                </div>
+                </a>
+
               </div>
             </div>
 
             {/* RIGHT: Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-10">
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                    <MessageSquare className="text-yellow-500" />
+              <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 sm:p-8 md:p-10">
+                <div className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <MessageSquare className="text-yellow-500 w-5 h-5 md:w-6 md:h-6" />
                     Send us a Message
                   </h2>
-                  <p className="text-slate-500 mt-2">Fill out the form below and we'll get back to you shortly.</p>
+                  <p className="text-sm md:text-base text-slate-500 mt-2">Fill out the form below and we'll get back to you shortly.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
                     {/* Name */}
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-slate-700 font-medium">Full Name <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="name" className="text-slate-700 font-medium text-sm">Full Name <span className="text-red-500">*</span></Label>
                       <Input
                         id="name"
                         placeholder="John Doe"
@@ -244,7 +288,7 @@ export default function ContactPage() {
 
                     {/* Email */}
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-slate-700 font-medium">Email Address <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="email" className="text-slate-700 font-medium text-sm">Email Address <span className="text-red-500">*</span></Label>
                       <Input
                         id="email"
                         type="email"
@@ -257,10 +301,10 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
                      {/* Phone */}
                      <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-slate-700 font-medium">Phone Number <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="phone" className="text-slate-700 font-medium text-sm">Phone Number <span className="text-red-500">*</span></Label>
                       <Input
                         id="phone"
                         type="tel"
@@ -274,7 +318,7 @@ export default function ContactPage() {
 
                     {/* Program Interest */}
                     <div className="space-y-2">
-                      <Label htmlFor="program" className="text-slate-700 font-medium">Interested Program <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="program" className="text-slate-700 font-medium text-sm">Interested Program <span className="text-red-500">*</span></Label>
                       <Select
                         value={formData.programInterest}
                         onValueChange={(value) => handleChange('programInterest', value)}
@@ -294,21 +338,21 @@ export default function ContactPage() {
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-slate-700 font-medium">Message <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="message" className="text-slate-700 font-medium text-sm">Message <span className="text-red-500">*</span></Label>
                     <Textarea
                       id="message"
                       placeholder="Tell us about your career goals..."
                       rows={5}
                       value={formData.message}
                       onChange={(e) => handleChange('message', e.target.value)}
-                      className={`rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 ${errors.message ? 'border-red-500' : ''}`}
+                      className={`rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 resize-none ${errors.message ? 'border-red-500' : ''}`}
                     />
                     {errors.message && <p className="text-xs text-red-500">{errors.message}</p>}
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-slate-900 text-white font-bold rounded-xl hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300 shadow-lg hover:shadow-yellow-500/20"
+                    className="w-full h-12 md:h-14 bg-slate-900 text-white font-bold rounded-xl hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300 shadow-lg hover:shadow-yellow-500/20"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Sending...' : (
@@ -329,38 +373,41 @@ export default function ContactPage() {
       </section>
 
       {/* --- WHAT TO EXPECT SECTION --- */}
-      <section className="py-24 bg-white border-t border-slate-100">
+      <section className="py-16 md:py-24 bg-white border-t border-slate-100 overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10 md:mb-12">
             What Happens Next?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 relative">
             
             {/* Connecting Line (Desktop Only) */}
             <div className="hidden md:block absolute top-12 left-[20%] right-[20%] h-0.5 bg-slate-100 -z-10" />
+            
+            {/* Connecting Line (Mobile Only) */}
+            <div className="md:hidden absolute top-12 bottom-12 left-1/2 w-0.5 bg-slate-100 -translate-x-1/2 -z-10" />
 
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-6 shadow-sm z-10">
-                <Clock className="w-10 h-10 text-yellow-500" />
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
+                <Clock className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">1. Initial Contact</h3>
-              <p className="text-slate-500 text-sm px-4">Our advisor reviews your inquiry and reaches out within 24 hours.</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">1. Initial Contact</h3>
+              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">Our advisor reviews your inquiry and reaches out within 24 hours.</p>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-6 shadow-sm z-10">
-                <MessageSquare className="w-10 h-10 text-yellow-500" />
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
+                <MessageSquare className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">2. Consultation</h3>
-              <p className="text-slate-500 text-sm px-4">A detailed discussion to align our programs with your career goals.</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">2. Consultation</h3>
+              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">A detailed discussion to align our programs with your career goals.</p>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-6 shadow-sm z-10">
-                <CheckCircle2 className="w-10 h-10 text-yellow-500" />
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
+                <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">3. Enrollment</h3>
-              <p className="text-slate-500 text-sm px-4">We guide you through the seamless admission and onboarding process.</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">3. Enrollment</h3>
+              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">We guide you through the seamless admission and onboarding process.</p>
             </div>
 
           </div>
