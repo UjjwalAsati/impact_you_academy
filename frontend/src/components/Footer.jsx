@@ -1,16 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Zap } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, Linkedin, Instagram, Zap, MessageCircle } from 'lucide-react';
 
 export const Footer = () => {
   return (
     <footer data-testid="site-footer" className="bg-gradient-to-br from-navy-dark via-navy to-navy-light text-white mt-auto relative overflow-hidden pt-16 border-t border-white/5">
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
       
       <div className="container-custom pb-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          
           {/* Brand Section */}
           <div className="space-y-6">
             <img 
@@ -63,41 +64,69 @@ export const Footer = () => {
               <span className="text-gold mr-2">•</span> Contact Us
             </h4>
             <ul className="space-y-4">
-              <li className="flex items-start space-x-3 group">
-                <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
-                  <Phone size={18} className="text-gold" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-1">Mobile</p>
-                  <a href="tel:+916269391942" className="text-sm text-slate-200 font-medium hover:text-gold transition-colors" data-testid="footer-phone">
-                    +91 62693 91942
-                  </a>
-                </div>
+              
+              {/* Phone */}
+              <li>
+                <a href="tel:+916269391942" className="flex items-start space-x-3 group w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy rounded-lg">
+                  <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
+                    <Phone size={18} className="text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400 mb-1 group-hover:text-slate-300 transition-colors">Mobile</p>
+                    <p className="text-sm text-slate-200 font-medium group-hover:text-gold transition-colors" data-testid="footer-phone">
+                      +91 62693 91942
+                    </p>
+                  </div>
+                </a>
               </li>
-              <li className="flex items-start space-x-3 group">
-                <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
-                  <Mail size={18} className="text-gold" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-1">Email Us</p>
-                  <a href="mailto:impactyouacademy@gmail.com" className="text-sm text-slate-200 font-medium break-all hover:text-gold transition-colors" data-testid="footer-email">
-                    impactyouacademy@gmail.com
-                  </a>
-                </div>
+
+              {/* WhatsApp */}
+              <li>
+                <a href="https://wa.me/916269391942" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy rounded-lg">
+                  <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
+                    <MessageCircle size={18} className="text-gold group-hover:text-green-400 transition-colors" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400 mb-1 group-hover:text-slate-300 transition-colors">WhatsApp</p>
+                    <p className="text-sm text-slate-200 font-medium group-hover:text-green-400 transition-colors" data-testid="footer-whatsapp">
+                      Chat with us
+                    </p>
+                  </div>
+                </a>
               </li>
-              <li className="flex items-start space-x-3 group">
-                <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
-                  <MapPin size={18} className="text-gold" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-1">Address</p>
-                  <p className="text-sm text-slate-200 font-medium leading-relaxed" data-testid="footer-address">
-                    Impact You Academy<br />
-                    3rd Floor, 315 MG Road<br />
-                    Indore – 452010, MP, India
-                  </p>
-                </div>
+
+              {/* Email */}
+              <li>
+                <a href="mailto:impactyouacademy@gmail.com" className="flex items-start space-x-3 group w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy rounded-lg">
+                  <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
+                    <Mail size={18} className="text-gold" />
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-xs text-slate-400 mb-1 group-hover:text-slate-300 transition-colors">Email Us</p>
+                    <p className="text-sm text-slate-200 font-medium break-all group-hover:text-gold transition-colors" data-testid="footer-email">
+                      impactyouacademy@gmail.com
+                    </p>
+                  </div>
+                </a>
               </li>
+
+              {/* Address */}
+              <li>
+                <a href="https://www.google.com/maps/search/?api=1&query=315+MG+Road,+Indore,+MP,+India" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy rounded-lg">
+                  <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors">
+                    <MapPin size={18} className="text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400 mb-1 group-hover:text-slate-300 transition-colors">Address</p>
+                    <p className="text-sm text-slate-200 font-medium leading-relaxed group-hover:text-gold transition-colors" data-testid="footer-address">
+                      Impact You Academy<br />
+                      3rd Floor, 315 MG Road<br />
+                      Indore – 452010, MP, India
+                    </p>
+                  </div>
+                </a>
+              </li>
+
             </ul>
           </div>
 
@@ -111,7 +140,7 @@ export const Footer = () => {
                 href="https://www.linkedin.com/company/impact-you-academy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={18} className="text-slate-300 group-hover:text-gold transition-colors" />
@@ -120,7 +149,7 @@ export const Footer = () => {
                 href="https://www.instagram.com/impactyouacademy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-gold/20 border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy"
                 aria-label="Instagram"
               >
                 <Instagram size={18} className="text-slate-300 group-hover:text-gold transition-colors" />
@@ -130,10 +159,10 @@ export const Footer = () => {
             {/* MANDATORY POLICY LINKS */}
             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Policies</h4>
             <ul className="space-y-2">
-              <li><Link to="/privacy-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms-and-conditions" className="text-xs text-slate-400 hover:text-gold transition-colors">Terms of Service</Link></li>
-              <li><Link to="/refund-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Refund Policy</Link></li>
-              <li><Link to="/shipping-policy" className="text-xs text-slate-400 hover:text-gold transition-colors">Shipping & Delivery</Link></li>
+              <li><Link to="/privacy-policy" className="text-xs text-slate-400 hover:text-gold transition-colors focus:outline-none focus:text-gold">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className="text-xs text-slate-400 hover:text-gold transition-colors focus:outline-none focus:text-gold">Terms of Service</Link></li>
+              <li><Link to="/refund-policy" className="text-xs text-slate-400 hover:text-gold transition-colors focus:outline-none focus:text-gold">Refund Policy</Link></li>
+              <li><Link to="/shipping-policy" className="text-xs text-slate-400 hover:text-gold transition-colors focus:outline-none focus:text-gold">Shipping & Delivery</Link></li>
             </ul>
           </div>
         </div>
@@ -159,7 +188,7 @@ export const Footer = () => {
               Crafted with <span className="text-gold animate-pulse">♥</span> by our{' '}
               <Link 
                 to="/developers" 
-                className="text-white hover:text-gold font-semibold transition-colors"
+                className="text-white hover:text-gold font-semibold transition-colors focus:outline-none focus:underline"
               >
                 Developers
               </Link>
