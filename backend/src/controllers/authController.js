@@ -4,7 +4,8 @@ const crypto = require('crypto');
 const { signToken } = require('../utils/jwt');
 const sendEmail = require("../utils/sendEmail");
 const PendingUser = require("../models/PendingUser");
-
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 /**
  * REGISTER
  */
@@ -40,15 +41,16 @@ exports.register = async (req, res) => {
 
     const verifyURL = `${process.env.FRONTEND_URL}/verify-email/${rawToken}`;
 
-    await sendEmail({
-      to: email,
-      subject: "Verify your email - Impact You Academy",
-      html: `
-        <h2>Verify Your Email</h2>
-        <p>Click below to activate your account:</p>
-        <a href="${verifyURL}">Verify Email</a>
-        <p>This link expires in 15 minutes.</p>
-      `
+    await resend.emails.send({
+    from: "Impact You Academy <onboarding@impactyouacademy.com>",
+    to: email,
+    subject: "Verify your email - Impact You Academy",
+    html: `
+      <h2>Verify Your Email</h2>
+      <p>Click below to activate your account:</p>
+      <a href="${verifyURL}">Verify Email</a>
+      <p>This link expires in 15 minutes.</p>
+    `
     });
 
     res.json({
@@ -171,7 +173,8 @@ exports.forgotPassword = async (req, res) => {
     const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     // Send Email
-    await sendEmail({
+    await resend.emails.send({
+     from: "Impact You Academy <onboarding@impactyouacademy.com>",
       to: user.email,
       subject: "Password Reset - Impact You Academy",
       html: `
@@ -179,8 +182,8 @@ exports.forgotPassword = async (req, res) => {
         <p>You requested to reset your password.</p>
         <p>Click the button below to reset your password:</p>
         <a href="${resetURL}" 
-           style="display:inline-block;padding:10px 15px;background:#1e293b;color:#ffffff;text-decoration:none;border-radius:5px;">
-           Reset Password
+          style="display:inline-block;padding:10px 15px;background:#1e293b;color:#ffffff;text-decoration:none;border-radius:5px;">
+          Reset Password
         </a>
         <p>This link expires in 15 minutes.</p>
       `
