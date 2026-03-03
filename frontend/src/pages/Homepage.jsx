@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 import { 
@@ -8,55 +8,7 @@ import {
 
 // --- ADVANCED ANIMATION COMPONENTS ---
 
-// 1. Custom Smooth Cursor (Hidden on touch devices)
-const CustomCursor = () => {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  const springConfig = { damping: 25, stiffness: 700, mass: 0.5 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    const moveCursor = (e) => {
-      cursorX.set(e.clientX - 16);
-      cursorY.set(e.clientY - 16);
-    };
-    
-    const handleMouseOver = (e) => {
-      if (e.target.closest('a') || e.target.closest('button')) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
-    };
-
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseover', handleMouseOver);
-    return () => {
-      window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-yellow-500 pointer-events-none z-[100] hidden md:flex items-center justify-center mix-blend-difference"
-      style={{ x: cursorXSpring, y: cursorYSpring }}
-      animate={{ 
-        scale: isHovering ? 1.5 : 1,
-        backgroundColor: isHovering ? 'rgba(234, 179, 8, 0.2)' : 'transparent'
-      }}
-    >
-      <motion.div 
-        className="w-1.5 h-1.5 bg-yellow-500 rounded-full"
-        animate={{ scale: isHovering ? 0 : 1 }}
-      />
-    </motion.div>
-  );
-};
-
-// 2. Magnetic Hover Wrapper
+// 1. Magnetic Hover Wrapper
 const MagneticWrapper = ({ children, className }) => {
   const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -85,7 +37,7 @@ const MagneticWrapper = ({ children, className }) => {
   );
 };
 
-// 3. Spotlight Card
+// 2. Spotlight Card
 const SpotlightCard = ({ children, className }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -114,7 +66,7 @@ const SpotlightCard = ({ children, className }) => {
   );
 };
 
-// 4. 3D Tilt Card
+// 3. 3D Tilt Card
 const TiltCard = ({ children, className }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -147,7 +99,7 @@ const TiltCard = ({ children, className }) => {
   );
 };
 
-// 5. Infinite Marquee
+// 4. Infinite Marquee
 const InfiniteMarquee = ({ items }) => (
   <div className="relative flex overflow-hidden w-full group py-4">
     <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
@@ -212,10 +164,8 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="bg-slate-50 font-sans text-slate-900 selection:bg-yellow-200 selection:text-slate-900 overflow-x-hidden md:cursor-none">
+    <div className="bg-slate-50 font-sans text-slate-900 selection:bg-yellow-200 selection:text-slate-900 overflow-x-hidden">
       
-      <CustomCursor />
-
       {/* Top Scroll Progress Bar */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1.5 bg-yellow-500 origin-left z-[60] shadow-[0_0_20px_rgba(234,179,8,1)]" 
@@ -258,13 +208,13 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pb-2" 
+              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] text-slate-900 pb-2" 
             >
               Impact You Academy
             </motion.h1>
           </div>
 
-         <motion.h2 
+          <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
@@ -353,7 +303,6 @@ export default function HomePage() {
             </motion.p>
           </div>
 
-          {/* STABLE FLEX/GRID LAYOUT FIX FOR BENTO BOXES */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Left Column (Spans 2/3 on Desktop) */}
