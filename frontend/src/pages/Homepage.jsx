@@ -82,11 +82,12 @@ export default function HomePage() {
           </div>
 
           <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
-            Staffing & Talent Acquisition <br />
+            Impact You Academy <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
-              Professional Training
+              HR & Recruitment Training Institute
             </span>
           </h1>
+
 
           <p className="animate-fade-up delay-300 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 mb-10 leading-relaxed">
             Industry-aligned programs designed to develop job-ready recruitment professionals through structured learning, live hiring exposure, and professional mentoring.
