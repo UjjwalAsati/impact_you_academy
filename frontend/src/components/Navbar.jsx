@@ -61,7 +61,7 @@ export const Navbar = () => {
           {/* --- LEFT: Logo --- */}
           <Link to="/" className="flex-shrink-0 flex items-center">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="Impact You Academy"
               className="h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
             />

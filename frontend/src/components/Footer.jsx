@@ -15,7 +15,7 @@ export const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             <img 
-              src="/logo.jpeg" 
+              src="/logo.png" 
               alt="Impact You Academy" 
               className="h-16 w-auto mb-4 rounded-lg"
               data-testid="footer-logo"
