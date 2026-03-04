@@ -144,7 +144,8 @@ export default function StaffingTrainingPage() {
       <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-yellow-500 origin-left z-[60] shadow-[0_0_20px_rgba(234,179,8,1)]" style={{ scaleX: scrollYProgress }} />
       
       {/* --- HERO SECTION --- */}
-      <section className="relative w-full min-h-[100dvh] flex flex-col justify-center items-center overflow-hidden bg-white px-4">
+      {/* Added pt-28 pb-32 md:py-0 to prevent mobile overlap */}
+      <section className="relative w-full min-h-[100dvh] flex flex-col justify-center items-center overflow-hidden bg-white px-4 pt-28 pb-32 md:py-0">
         
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <motion.div style={{ y: prefersReducedMotion ? 0 : yBg1 }} animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 45, 0] }} transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] right-[-5%] w-[40vw] h-[40vw] min-w-[400px] min-h-[400px] bg-yellow-100/60 rounded-full blur-[100px] mix-blend-multiply" />
@@ -190,9 +191,10 @@ export default function StaffingTrainingPage() {
           </motion.div>
         </div>
 
+        {/* Changed bottom-8 to bottom-24 md:bottom-8 to clear Safari mobile menu */}
         <button 
           onClick={scrollToNext} 
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
+          className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
         >
           <span className="text-xs font-bold uppercase tracking-widest">Select Program</span>
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
@@ -261,7 +263,7 @@ export default function StaffingTrainingPage() {
                           item.color === 'emerald' ? 'text-emerald-600' : 
                           'text-yellow-600'
                       }`}>
-                         View Full Syllabus <ArrowRight size={18} className="ml-2" />
+                          View Full Syllabus <ArrowRight size={18} className="ml-2" />
                       </div>
                     </div>
                   </div>
