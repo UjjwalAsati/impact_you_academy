@@ -114,7 +114,7 @@ export const Navbar = () => {
               style={{ transformStyle: "preserve-3d" }}
             >
               <img
-                src="/logo.jpeg"
+                src="/logo.png"
                 alt="Impact You Academy"
                 className={`w-auto object-contain transition-all duration-500 rounded-lg shadow-sm ${isScrolled ? 'h-10' : 'h-12'}`}
               />
@@ -325,3 +325,4 @@ export const Navbar = () => {
     </>
   );
 };
+
