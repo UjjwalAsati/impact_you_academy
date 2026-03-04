@@ -88,7 +88,8 @@ export default function AboutPage() {
       <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-yellow-500 origin-left z-[60] shadow-[0_0_20px_rgba(234,179,8,1)]" style={{ scaleX: scrollYProgress }} />
 
       {/* --- HERO SECTION (Single Screen) --- */}
-      <section className="relative w-full h-[100dvh] min-h-[600px] flex flex-col justify-center items-center overflow-hidden bg-white px-4">
+      {/* Changed to min-h-[100dvh] for mobile scaling and added pt-28 pb-32 */}
+      <section className="relative w-full min-h-[100dvh] flex flex-col justify-center items-center overflow-hidden bg-white px-4 pt-28 pb-32 md:py-0">
         
         {/* Animated Parallax Background Blobs */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -130,10 +131,10 @@ export default function AboutPage() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Changed from bottom-8 to bottom-24 md:bottom-8 */}
         <button 
           onClick={scrollToNext} 
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
+          className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
         >
           <span className="text-[10px] font-bold uppercase tracking-widest pl-[0.1em]">Explore</span>
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
