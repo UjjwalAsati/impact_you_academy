@@ -1,130 +1,100 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { 
-  BookOpen, 
-  Users, 
-  Clock, 
-  CheckCircle2, 
-  Briefcase, 
-  Award, 
-  Layout, 
-  TrendingUp, 
-  ShieldCheck, 
-  Phone,
-  ArrowRight,
-  Download,
-  Sparkles,
-  Zap,
-  Target,
-  X,
-  Calendar,
-  IndianRupee,
-  ChevronDown,
-  ChevronUp
+  BookOpen, Users, Clock, Briefcase, Award, TrendingUp, ShieldCheck, 
+  ArrowRight, Download, Sparkles, Target, X, Calendar, IndianRupee, ChevronDown
 } from 'lucide-react';
 
+// --- ADVANCED ANIMATION COMPONENTS ---
+const MagneticWrapper = ({ children, className }) => {
+  const ref = React.useRef(null);
+  const [position, setPosition] = React.useState({ x: 0, y: 0 });
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    setPosition({ x: (clientX - (left + width / 2)) * 0.15, y: (clientY - (top + height / 2)) * 0.15 });
+  };
+  const reset = () => setPosition({ x: 0, y: 0 });
+  return (
+    <motion.div ref={ref} onMouseMove={handleMouse} onMouseLeave={reset} animate={{ x: position.x, y: position.y }} transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }} className={className}>
+      {children}
+    </motion.div>
+  );
+};
+
+const TiltCard = ({ children, className, onClick }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    x.set((e.clientX - rect.left) / width - 0.5);
+    y.set((e.clientY - rect.top) / height - 0.5);
+  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
+
+  return (
+    <motion.div onClick={onClick} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className={`relative will-change-transform ${className}`}>
+      {children}
+    </motion.div>
+  );
+};
+
 export default function StaffingTrainingPage() {
-  
-  // State for the active modal
   const [selectedProgram, setSelectedProgram] = useState(null);
-  // State for modal accordion
   const [openModuleIndex, setOpenModuleIndex] = useState(null);
+
+  const { scrollYProgress } = useScroll();
+  const prefersReducedMotion = useReducedMotion();
+  
+  const yBg1 = useTransform(scrollYProgress, [0, 1], [0, 400]);
+  const yBg2 = useTransform(scrollYProgress, [0, 1], [0, -300]);
 
   const toggleModule = (index) => {
     setOpenModuleIndex(openModuleIndex === index ? null : index);
   };
 
-  // --- INTERNAL ANIMATION STYLES ---
-  const animationStyles = `
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0px); }
-    }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(0.95); }
-    }
-    @keyframes modal-pop {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    
-    .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-    .animate-float { animation: float 6s ease-in-out infinite; }
-    .animate-modal { animation: modal-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .delay-400 { animation-delay: 0.4s; }
-
-    .card-hover-effect {
-      transition: all 0.4s ease;
-    }
-    .card-hover-effect:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px -15px rgba(234, 179, 8, 0.15);
-      border-color: rgba(234, 179, 8, 0.4);
-    }
-    
-    /* Scrollbar for modal */
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-  `;
+  const scrollToNext = () => {
+    document.getElementById('programs-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   // --- 1. DETAILED SYLLABUS DATA ---
-
   const syllabusIndustryReady = [
-    { title: "M1: HR & Staffing Fundamentals", topics: ["Introduction to HR & Staffing", "Generalist vs Recruiter vs Consultant", "Hiring Types: Perm, Contract, Payroll", "Ethical Hiring Basics"] },
-    { title: "M2: Recruitment Process (End-to-End)", topics: ["Step-by-Step Hiring Flow", "Reading JDs & Checklist Creation", "Must-Have vs Good-to-Have Skills", "Offer & Joining Process"] },
-    { title: "M3: Candidate Sourcing Techniques", topics: ["Job Portals & LinkedIn Sourcing", "Boolean Search Basics", "Resume Filtering (Fake vs Genuine)", "Target: Source 20 profiles/day"] },
-    { title: "M4: Screening & Communication", topics: ["Telephonic Screening Format", "Salary & Notice Period Discussion", "Professional Etiquette (Call/Email)", "Mock Screening Calls"] },
-    { title: "M5: Interview Coordination", topics: ["Scheduling & Calendar Management", "Client & Candidate Coordination", "Feedback Follow-up", "Daily Hiring Reports (Trackers)"] },
-    { title: "M6: Offer, Joining & Ops Basics", topics: ["Offer Process & Documents Checklist", "Joining Formalities", "Attendance & Payroll Overview", "Employee Life Cycle Basics"] },
-    { title: "M7: Workplace Readiness", topics: ["Professional Attitude", "Time Management", "Handling Pressure & Targets", "Career Growth Guidance"] }
+    { title: "M1: HR & Staffing Fundamentals", topics: ["Introduction to HR & Staffing", "Generalist vs Recruiter", "Hiring Types: Perm, Contract", "Ethical Hiring Basics"] },
+    { title: "M2: Recruitment Process", topics: ["Step-by-Step Hiring Flow", "Reading JDs & Checklists", "Must-Have vs Good-to-Have", "Offer & Joining Process"] },
+    { title: "M3: Candidate Sourcing", topics: ["Job Portals & LinkedIn", "Boolean Search Basics", "Resume Filtering", "Target: Source 20 profiles/day"] },
+    { title: "M4: Screening & Comm", topics: ["Telephonic Screening", "Salary & Notice Period", "Professional Etiquette", "Mock Screening Calls"] },
+    { title: "M5: Interview Coordination", topics: ["Scheduling & Calendars", "Client Coordination", "Feedback Follow-up", "Daily Hiring Reports"] },
+    { title: "M6: Offer & Ops Basics", topics: ["Offer Process & Documents", "Joining Formalities", "Attendance & Payroll", "Employee Life Cycle"] }
   ];
 
   const syllabusCSRP = [
-    { title: "M1: Staffing Industry Overview", topics: ["Indian & Global Staffing Landscape", "Perm vs Contract vs Executive Search", "Recruiter Roles & Ecosystem"] },
-    { title: "M2: End-to-End Recruitment", topics: ["JD Understanding & Manpower Requisition", "Sourcing to Interview Coordination", "Offer Management & Follow-up"] },
-    { title: "M3: Sourcing Techniques", topics: ["Job Portals & Social Platforms", "Boolean Search & LinkedIn Sourcing", "Referrals & Bulk Hiring Methods"] },
-    { title: "M4: Screening & Interview Skills", topics: ["Resume Analysis & Red Flags", "Telephonic Screening Techniques", "Candidate Evaluation & Feedback"] },
-    { title: "M5: Client Handling", topics: ["Requirement Gathering", "SLA & TAT Management", "Expectation & Escalation Management", "Negotiation Skills"] },
-    { title: "M6: Offer & Closure", topics: ["CTC Structure & Salary Negotiation", "Counter-Offer Handling", "Offer Rollout & Position Closure"] },
+    { title: "M1: Staffing Industry", topics: ["Indian & Global Landscape", "Perm vs Contract", "Recruiter Ecosystem"] },
+    { title: "M2: End-to-End Recruitment", topics: ["JD Understanding", "Sourcing to Interviews", "Offer Management"] },
+    { title: "M3: Sourcing Techniques", topics: ["Job Portals & Social", "Boolean & LinkedIn", "Referrals & Bulk Hiring"] },
+    { title: "M4: Screening Skills", topics: ["Resume Analysis", "Telephonic Techniques", "Candidate Evaluation"] },
+    { title: "M5: Client Handling", topics: ["Requirement Gathering", "SLA & TAT Management", "Expectation Management"] },
+    { title: "M6: Offer & Closure", topics: ["CTC & Negotiation", "Counter-Offer Handling", "Position Closure"] },
     { title: "M7: Compliance Basics", topics: ["Labour Law Overview", "PF, ESIC & Minimum Wages", "Payroll & BGV Basics"] },
-    { title: "M8: HR Operations", topics: ["Onboarding & Documentation", "Attendance, Leave & Exit Processes", "HR MIS & Reporting"] },
-    { title: "M9: Recruiter KPIs", topics: ["Productivity Metrics & Reporting", "Source Performance Analysis", "Targets & Incentive Structures"] },
-    { title: "M10: Staffing Technology", topics: ["ATS & CRM Fundamentals", "Excel Tracking & Dashboards", "Hiring Automation Basics"] },
-    { title: "M11: Professional Skills", topics: ["Email & Call Etiquette", "Time & Stress Management", "Ethics & Confidentiality"] },
-    { title: "M12: Practical Training", topics: ["Live Sourcing Practice", "Mock Interviews & Role Plays", "Closure & Joining Tracking"] },
-    { title: "M13: Special Hiring (Optional)", topics: ["IT & Non-IT Hiring", "Bulk, Campus & Niche Hiring"] },
-    { title: "M14: Certification & Readiness", topics: ["Recruiter Resume Building", "Interview Preparation", "Final Assessment & Certification"] }
+    { title: "M8: HR Operations", topics: ["Onboarding & Docs", "Attendance & Leaves", "HR MIS & Reporting"] },
+    { title: "M9: Recruiter KPIs", topics: ["Productivity Metrics", "Source Performance", "Targets & Incentives"] },
+    { title: "M10: Staffing Tech", topics: ["ATS & CRM Fundamentals", "Excel Dashboards", "Hiring Automation"] }
   ];
 
   const syllabusLabourLaw = [
-    { title: "M1: HR & Labour Law Foundations", topics: ["Role of HR in Legal Compliance", "Employer & Employee Rights", "HR Legal Responsibilities"] },
-    { title: "M2: Industrial & Employment Laws", topics: ["Industrial Disputes Act", "Termination, Layoff & Retrenchment", "Standing Orders & Trade Unions"] },
-    { title: "M3: Payroll & Wage Compliance", topics: ["Minimum Wages Act", "Payment of Wages Act", "Bonus & Gratuity Laws", "Shops & Establishment Act"] },
-    { title: "M4: Social Security Laws", topics: ["Provident Fund (EPF) - Practical Calculation", "ESI - Eligibility, Claims & Returns", "Labour Welfare Fund (LWF)"] },
-    { title: "M5: Women & Workplace Safety", topics: ["POSH Act (Sexual Harassment)", "Maternity Benefit Act", "Equal Remuneration Act"] },
-    { title: "M6: HR Documentation", topics: ["Appointment & Offer Letters", "HR Policies & Handbooks", "Warning & Termination Letters", "Compliance Registers"] },
-    { title: "M7: Practical Compliance & Audit", topics: ["Labour Law Compliance Calendar", "Inspection Handling", "HR Audit & Risk Management", "Corporate Case Studies"] }
+    { title: "M1: Labour Law Foundations", topics: ["Role of HR in Compliance", "Employer Rights", "HR Legal Responsibilities"] },
+    { title: "M2: Industrial Laws", topics: ["Industrial Disputes Act", "Termination & Layoffs", "Standing Orders"] },
+    { title: "M3: Payroll Compliance", topics: ["Minimum Wages Act", "Payment of Wages", "Bonus & Gratuity"] },
+    { title: "M4: Social Security", topics: ["Provident Fund (EPF)", "ESI Eligibility & Claims", "Labour Welfare Fund"] },
+    { title: "M5: Workplace Safety", topics: ["POSH Act", "Maternity Benefit Act", "Equal Remuneration"] },
+    { title: "M6: HR Documentation", topics: ["Appointment Letters", "HR Handbooks", "Warning Letters"] }
   ];
 
   // --- 2. PROGRAM PRODUCTS ---
@@ -135,21 +105,19 @@ export default function StaffingTrainingPage() {
       price: "₹2,999",
       duration: "1 Month",
       mode: "Alternate Days",
-      target: "Freshers & Beginners",
-      desc: "A practical, job-oriented program designed to make candidates industry-ready recruiters with live exposure.",
-      idealFor: "Fresh Graduates, HR Interns, and Career Switchers looking for affordable, real-world exposure.",
+      desc: "A practical, job-oriented program designed to make candidates industry-ready recruiters.",
+      idealFor: "Fresh Graduates, HR Interns, and Career Switchers looking for affordable exposure.",
       syllabus: syllabusIndustryReady,
       popular: false,
       color: "blue"
     },
     {
       id: "csrp",
-      title: "Certified Staffing Professional (CSRP)",
+      title: "Certified Staffing Professional",
       price: "₹7,999",
       duration: "30 Days",
       mode: "Alternate Batch",
-      target: "Aspiring Professionals",
-      desc: "Our flagship 14-module certification covering the entire staffing lifecycle from sourcing to compliance.",
+      desc: "Our flagship certification covering the entire staffing lifecycle from sourcing to compliance.",
       idealFor: "Those seeking a recognized certification and deep operational knowledge.",
       syllabus: syllabusCSRP,
       popular: true, 
@@ -161,7 +129,6 @@ export default function StaffingTrainingPage() {
       price: "₹19,999",
       duration: "60 Days",
       mode: "Alternate Days",
-      target: "HR Specialists",
       desc: "Advanced specialization in Payroll, Social Security, POSH, Industrial Relations and Audits.",
       idealFor: "HR Ops professionals and those wanting to master statutory compliance.",
       syllabus: syllabusLabourLaw,
@@ -171,250 +138,296 @@ export default function StaffingTrainingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100 selection:text-slate-900">
-      <style>{animationStyles}</style>
+    <div className="bg-slate-50 font-sans selection:bg-yellow-200 overflow-x-hidden">
+      
+      {/* Scroll Progress Bar */}
+      <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-yellow-500 origin-left z-[60] shadow-[0_0_20px_rgba(234,179,8,1)]" style={{ scaleX: scrollYProgress }} />
       
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-white">
+      {/* Added pt-28 pb-32 md:py-0 to prevent mobile overlap */}
+      <section className="relative w-full min-h-[100dvh] flex flex-col justify-center items-center overflow-hidden bg-white px-4 pt-28 pb-32 md:py-0">
         
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
-            <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-yellow-100 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
-            <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <motion.div style={{ y: prefersReducedMotion ? 0 : yBg1 }} animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 45, 0] }} transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] right-[-5%] w-[40vw] h-[40vw] min-w-[400px] min-h-[400px] bg-yellow-100/60 rounded-full blur-[100px] mix-blend-multiply" />
+            <motion.div style={{ y: prefersReducedMotion ? 0 : yBg2 }} animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3], rotate: [0, -45, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute bottom-[10%] left-[-10%] w-[50vw] h-[50vw] min-w-[500px] min-h-[500px] bg-blue-100/50 rounded-full blur-[100px] mix-blend-multiply" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="relative z-10 w-full max-w-5xl mx-auto text-center flex flex-col items-center mt-8">
           
-          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-yellow-400 text-xs font-bold uppercase tracking-wider mb-8 shadow-lg shadow-slate-900/10">
-            <Sparkles className="w-3 h-3 animate-pulse" />
+          <motion.div initial={{ opacity: 0, scale: 0.8, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", bounce: 0.6, duration: 1 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-900 text-yellow-400 text-sm font-bold uppercase tracking-wider mb-8 shadow-xl">
+            <Sparkles className="w-4 h-4 animate-pulse" />
             <span>Job-Oriented Certification</span>
-          </div>
+          </motion.div>
           
-          <h1 className="animate-fade-up delay-200 text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
-            Staffing & HR <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
-              Training Programs
-            </span>
-          </h1>
-
-          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-xl text-slate-600 mb-12 leading-relaxed">
-             From foundational recruitment skills to advanced labour law compliance. Choose the path that fits your career goals.
-          </p>
-
-          <div className="animate-fade-up delay-400 flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/contact">
-              <button className="group relative px-8 py-4 bg-slate-900 text-white text-base font-bold rounded-full shadow-xl hover:bg-slate-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <span className="relative z-10 flex items-center gap-2">Explore Batches <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/></span>
-              </button>
-            </Link>
-            <button className="px-8 py-4 bg-white text-slate-700 border border-slate-200 text-base font-bold rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-md">
-              <Download size={18} className="text-yellow-600" />
-              Download Brochure
-            </button>
+          <div className="overflow-hidden mb-4">
+            <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] text-slate-900 pb-2 mb-6">
+              Staffing & HR <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600">
+                Training Programs
+              </span>
+            </motion.h1>
           </div>
+
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }} className="text-lg md:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-3xl font-medium mb-12">
+             From foundational recruitment skills to advanced labour law compliance. Choose the path that fits your career goals.
+          </motion.p>
+
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8, type: "spring" }} className="flex flex-col sm:flex-row gap-5 justify-center items-center w-full">
+            <MagneticWrapper>
+              <Link to="/contact" className="block w-full sm:w-auto">
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative w-full sm:w-auto px-8 py-4 bg-slate-900 text-white text-base font-bold rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_50px_rgba(234,179,8,0.3)] hover:bg-slate-800 transition-all flex items-center justify-center gap-2 group overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-2">
+                    Explore Batches <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </motion.button>
+              </Link>
+            </MagneticWrapper>
+            <MagneticWrapper>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-4 bg-white/60 backdrop-blur-md border border-slate-200 text-slate-900 font-bold rounded-full hover:border-yellow-400 hover:bg-white transition-colors shadow-sm">
+                  <Download size={20} className="text-yellow-600" />
+                  Download Brochure
+              </motion.button>
+            </MagneticWrapper>
+          </motion.div>
         </div>
+
+        {/* Changed bottom-8 to bottom-24 md:bottom-8 to clear Safari mobile menu */}
+        <button 
+          onClick={scrollToNext} 
+          className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
+        >
+          <span className="text-xs font-bold uppercase tracking-widest">Select Program</span>
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
+            <ChevronDown className="w-8 h-8" />
+          </motion.div>
+        </button>
       </section>
 
       {/* --- PROGRAM OPTIONS (INTERACTIVE) --- */}
-      <section className="py-24 bg-slate-50 relative z-10">
+      <section id="programs-section" className="py-24 md:py-32 bg-slate-50 relative z-10 border-t border-slate-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Select Your Program</h2>
-            <p className="text-lg text-slate-600">Click on a card below to view the detailed syllabus and fee structure.</p>
+          <div className="text-center mb-16 md:mb-20">
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Select Your Program</motion.h2>
+            <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-xl text-slate-600 font-medium">Click on a card below to view the detailed syllabus and fee structure.</motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {programs.map((item) => (
-              <div 
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            {programs.map((item, index) => (
+              <motion.div 
                 key={item.id}
-                onClick={() => { setSelectedProgram(item); setOpenModuleIndex(null); }}
-                className={`group relative p-8 rounded-3xl transition-all duration-500 cursor-pointer h-full flex flex-col justify-between ${
-                  item.popular 
-                  ? 'bg-white border-2 border-yellow-400 shadow-2xl shadow-yellow-500/10 scale-105 z-10' 
-                  : 'bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2'
-                }`}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="h-full z-10"
               >
-                {item.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center gap-1">
-                    <Sparkles size={12} fill="white" /> Best Seller
-                  </div>
-                )}
-                
-                {/* Card Content */}
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div className={`p-3 rounded-xl flex-shrink-0 ${
-                        item.color === 'blue' ? 'bg-blue-100 text-blue-700' : 
-                        item.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 
-                        'bg-yellow-100 text-yellow-700'
+                <TiltCard onClick={() => { setSelectedProgram(item); setOpenModuleIndex(null); }} className="cursor-pointer h-full">
+                  <div className={`relative p-8 md:p-10 rounded-[2.5rem] h-full flex flex-col transform-gpu ${
+                      item.popular 
+                        ? 'bg-white shadow-[0_30px_60px_rgba(234,179,8,0.2)] ring-2 ring-yellow-400 z-20' 
+                        : 'bg-white ring-1 ring-slate-200 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-shadow'
+                    }`}
+                  >
+                    {item.popular && (
+                      <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg">
+                        <Sparkles size={14} fill="currentColor" /> Best Seller
+                      </motion.div>
+                    )}
+
+                    <div className="flex justify-between items-start mb-8">
+                      <div className={`p-4 rounded-[1.2rem] flex-shrink-0 shadow-inner ${
+                          item.color === 'blue' ? 'bg-blue-100 text-blue-700' : 
+                          item.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                        <Award className="w-6 h-6" />
+                      </div>
+                      <div className="text-right pl-2">
+                        <span className="block text-3xl font-extrabold text-slate-900 whitespace-nowrap">{item.price}</span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-slate-900 mb-4 leading-tight tracking-tight">{item.title}</h3>
+                    
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-500 uppercase tracking-wider mb-6 bg-slate-50 px-4 py-2 rounded-xl w-max">
+                        <span className="flex items-center gap-1.5"><Clock size={14} /> {item.duration}</span>
+                        <span className="text-slate-300">•</span>
+                        <span>{item.mode}</span>
+                    </div>
+                    
+                    <p className="text-slate-600 leading-relaxed text-base mb-8 flex-grow font-medium">{item.desc}</p>
+                    
+                    <div className="mt-auto pt-6 border-t border-slate-100">
+                      <div className={`flex items-center text-base font-bold ${
+                          item.color === 'blue' ? 'text-blue-600' : 
+                          item.color === 'emerald' ? 'text-emerald-600' : 
+                          'text-yellow-600'
                       }`}>
-                      <Award className="w-6 h-6" />
-                    </div>
-                    <div className="text-right pl-2">
-                      <span className="block text-2xl font-bold text-slate-900 whitespace-nowrap">{item.price}</span>
+                          View Full Syllabus <ArrowRight size={18} className="ml-2" />
+                      </div>
                     </div>
                   </div>
-                  
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">{item.title}</h3>
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                      <span className="flex items-center gap-1"><Clock size={12} /> {item.duration}</span>
-                      <span>•</span>
-                      <span>{item.mode}</span>
-                  </div>
-                  
-                  <p className="text-slate-600 leading-relaxed text-sm mb-6">{item.desc}</p>
-                </div>
-                
-                {/* Card Footer Action */}
-                <div>
-                    <div className="w-full h-px bg-slate-100 mb-4"></div>
-                    <div className={`flex items-center text-sm font-bold ${
-                        item.color === 'blue' ? 'text-blue-600 group-hover:text-blue-700' : 
-                        item.color === 'emerald' ? 'text-emerald-600 group-hover:text-emerald-700' : 
-                        'text-yellow-600 group-hover:text-yellow-700'
-                    }`}>
-                       View Syllabus <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                </div>
-              </div>
+                </TiltCard>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- PROGRAM DETAIL MODAL (DYNAMIC SYLLABUS) --- */}
-      {selectedProgram && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div 
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
-            onClick={() => setSelectedProgram(null)}
-          ></div>
+      {/* --- PROGRAM DETAIL MODAL (ORIGINAL ACCORDION SYLLABUS) --- */}
+      <AnimatePresence>
+        {selectedProgram && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
+              onClick={() => setSelectedProgram(null)}
+            />
 
-          <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-modal flex flex-col max-h-[90vh]">
-            
-            {/* Modal Header */}
-            <div className="bg-slate-900 p-8 text-white relative flex-shrink-0">
-              <button 
-                onClick={() => setSelectedProgram(null)}
-                className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
-              <div className="flex gap-3 mb-4">
-                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold uppercase">
-                    <Calendar size={12} /> {selectedProgram.duration}
-                 </div>
-                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase">
-                    <IndianRupee size={12} /> {selectedProgram.price}
-                 </div>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-2">{selectedProgram.title}</h3>
-              <p className="text-slate-300 text-sm md:text-base">{selectedProgram.idealFor}</p>
-            </div>
-
-            {/* Modal Body (Scrollable Syllabus) */}
-            <div className="p-0 overflow-y-auto custom-scrollbar bg-slate-50 flex-grow">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+              transition={{ type: "spring", damping: 25, stiffness: 300 }} 
+              className="relative w-full max-w-3xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10"
+            >
               
-              <div className="p-8">
-                <h4 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2 sticky top-0 bg-slate-50 z-10">
-                   <BookOpen size={20} className="text-yellow-600" /> Complete Curriculum
-                </h4>
-                
-                <div className="space-y-3">
-                  {selectedProgram.syllabus.map((mod, idx) => (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
-                      <button 
-                        onClick={() => toggleModule(idx)}
-                        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
-                      >
-                        <span className="font-bold text-slate-800 text-sm md:text-base">{mod.title}</span>
-                        {openModuleIndex === idx ? <ChevronUp size={18} className="text-yellow-600 flex-shrink-0" /> : <ChevronDown size={18} className="text-slate-400 flex-shrink-0" />}
-                      </button>
-                      
-                      {openModuleIndex === idx && (
-                        <div className="px-4 pb-4 bg-slate-50/50 border-t border-slate-100">
-                          <ul className="space-y-2 mt-3">
-                            {mod.topics.map((topic, tIdx) => (
-                              <li key={tIdx} className="flex items-start gap-2 text-sm text-slate-600">
-                                <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
-                                {topic}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+              {/* Modal Header */}
+              <div className="bg-slate-900 p-8 text-white relative flex-shrink-0">
+                <button 
+                  onClick={() => setSelectedProgram(null)}
+                  className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-yellow-500 hover:text-slate-900 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+                <div className="flex gap-3 mb-4">
+                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider">
+                      <Calendar size={12} /> {selectedProgram.duration}
+                   </div>
+                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider">
+                      <IndianRupee size={12} /> {selectedProgram.price}
+                   </div>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight">{selectedProgram.title}</h3>
+                <p className="text-slate-300 text-sm md:text-base opacity-90">{selectedProgram.idealFor}</p>
+              </div>
+
+              {/* Modal Body (Scrollable Accordion Syllabus) */}
+              <div className="p-0 overflow-y-auto bg-slate-50 flex-grow" style={{ scrollbarWidth: 'thin' }}>
+                <div className="p-8">
+                  <h4 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2 sticky top-0 bg-slate-50 z-10 py-2">
+                     <BookOpen size={20} className="text-yellow-600" /> Complete Curriculum
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    {selectedProgram.syllabus.map((mod, idx) => (
+                      <div key={idx} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:border-yellow-400 transition-colors">
+                        <button 
+                          onClick={() => toggleModule(idx)}
+                          className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+                        >
+                          <span className="font-bold text-slate-800 text-sm md:text-base tracking-tight">{mod.title}</span>
+                          <motion.div animate={{ rotate: openModuleIndex === idx ? 180 : 0 }}>
+                            <ChevronDown size={18} className={openModuleIndex === idx ? "text-yellow-600" : "text-slate-400"} />
+                          </motion.div>
+                        </button>
+                        
+                        <AnimatePresence initial={false}>
+                          {openModuleIndex === idx && (
+                            <motion.div 
+                              initial={{ height: 0, opacity: 0 }} 
+                              animate={{ height: "auto", opacity: 1 }} 
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-4 bg-slate-50/50 border-t border-slate-100">
+                                <ul className="space-y-2 mt-3">
+                                  {mod.topics.map((topic, tIdx) => (
+                                    <li key={tIdx} className="flex items-start gap-2 text-sm text-slate-600 font-medium">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+                                      {topic}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center flex-shrink-0">
-              <div className="text-sm text-slate-500">
-                <span className="font-bold text-slate-900">Note:</span> Live classes + Recording access
+              {/* Modal Footer */}
+              <div className="p-6 border-t border-slate-100 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center flex-shrink-0">
+                <div className="text-sm text-slate-500 font-medium">
+                  <span className="font-bold text-slate-900 bg-yellow-100 px-2 py-1 rounded">Note:</span> Live classes + Recording access
+                </div>
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2">
+                    Enroll in Batch <ArrowRight size={18} />
+                  </motion.button>
+                </Link>
               </div>
-              <Link to="/contact" className="w-full sm:w-auto">
-                <button className="w-full px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors shadow-lg shadow-yellow-500/20">
-                  Enroll in Batch
-                </button>
-              </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
-      {/* --- CSRP PREVIEW GRID (Static Preview for SEO/Visuals) --- */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-
+      {/* --- CSRP PREVIEW GRID --- */}
+      <section className="py-24 md:py-32 bg-white relative overflow-hidden border-t border-slate-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12">
-            <div className="inline-block p-3 rounded-2xl bg-yellow-50 mb-4">
-                <Target className="w-8 h-8 text-yellow-600" />
+          <div className="text-center mb-16 md:mb-20">
+            <div className="inline-block p-4 rounded-[1.5rem] bg-yellow-100 mb-6 shadow-inner">
+                <Target className="w-10 h-10 text-yellow-600" />
             </div>
-            <h2 className="text-3xl lg:text-5xl font-bold text-slate-900 mb-6">
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
               Why Our CSRP Certification?
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              A glimpse into the 14 modules that define our flagship Certified Staffing & Recruitment Professional program.
-            </p>
+            </motion.h2>
+            <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-xl text-slate-600 max-w-3xl mx-auto font-medium">
+              A glimpse into the advanced modules that define our flagship Certified Staffing & Recruitment Professional program.
+            </motion.p>
           </div>
 
-          {/* Simple Grid Preview of CSRP High-Level Modules */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ visible: { transition: { staggerChildren: 0.05 } } }} 
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+          >
             {syllabusCSRP.slice(0, 8).map((mod, idx) => (
-               <div key={idx} className="p-4 rounded-xl border border-slate-100 bg-slate-50 text-center hover:bg-white hover:shadow-md transition-all">
-                  <h4 className="font-bold text-slate-800 text-sm mb-1">{mod.title.split(":")[1] || mod.title}</h4>
-                  <span className="text-xs text-slate-500">Module {idx + 1}</span>
-               </div>
+               <motion.div key={idx} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="p-6 rounded-[1.5rem] border border-slate-200/80 bg-slate-50 hover:bg-white hover:shadow-xl hover:-translate-y-1 hover:border-yellow-300 transition-all duration-300 text-center flex flex-col items-center justify-center">
+                  <h4 className="font-bold text-slate-900 text-base md:text-lg leading-tight mb-2 tracking-tight">{mod.title.split(":")[1] || mod.title}</h4>
+                  <span className="text-xs font-bold text-yellow-600 uppercase tracking-widest bg-yellow-100/50 px-3 py-1 rounded-full">Module {idx + 1}</span>
+               </motion.div>
             ))}
-             <div className="col-span-2 md:col-span-4 p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center text-slate-500 text-sm flex items-center justify-center">
+             <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="col-span-2 md:col-span-4 p-6 rounded-[1.5rem] border-2 border-dashed border-slate-300 bg-slate-50/50 text-center text-slate-500 font-bold text-lg flex items-center justify-center">
                 + 6 More Advanced Modules (Click "CSRP" above to view full syllabus)
-             </div>
-          </div>
+             </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* --- CTA SECTION --- */}
-      <section className="py-24 bg-slate-900 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500 rounded-full blur-[100px] opacity-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500 rounded-full blur-[100px] opacity-10 pointer-events-none" style={{ animationDelay: '2s' }} />
-        
+      <section className="py-32 bg-slate-900 flex justify-center items-center relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none">
+          {[...Array(2)].map((_, i) => (
+            <motion.div key={i} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border border-yellow-500/20 rounded-full" initial={{ width: 100, height: 100, opacity: 1 }} animate={{ width: 1000, height: 1000, opacity: 0 }} transition={{ duration: 5, repeat: Infinity, delay: i * 2, ease: "easeOut" }} />
+          ))}
+        </div>
+
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 tracking-tight">
-            Ready to Start Your Career?
-          </h2>
-          <p className="text-slate-300 mb-10 text-xl max-w-2xl mx-auto">
-            Join the next cohort and get certified.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/contact">
-              <button className="w-full sm:w-auto px-10 py-5 bg-yellow-500 text-slate-900 text-lg font-bold rounded-full hover:bg-yellow-400 hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(234,179,8,0.3)]">
-                Get Brochure
-              </button>
-            </Link>
-          </div>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">Ready to Start Your Career?</motion.h2>
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto font-medium">Join the next cohort and get certified.</motion.p>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, type: "spring" }} className="flex justify-center">
+             <MagneticWrapper>
+               <Link to="/contact">
+                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 rounded-full bg-yellow-500 text-slate-900 font-bold text-xl transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:shadow-[0_0_60px_rgba(234,179,8,0.6)] flex items-center gap-3">
+                   Get Full Brochure <Download size={24} />
+                 </motion.button>
+               </Link>
+             </MagneticWrapper>
+          </motion.div>
         </div>
       </section>
 

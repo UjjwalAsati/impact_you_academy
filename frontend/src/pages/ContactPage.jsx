@@ -1,59 +1,55 @@
+
 import React, { useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useReducedMotion } from 'framer-motion';
 import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '../components/ui/select';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Send, 
-  Sparkles, 
-  ChevronDown, 
-  MessageSquare,
-  Clock,
-  CheckCircle2,
-  MessageCircle
+  Mail, Phone, MapPin, Send, Sparkles, ChevronDown, MessageSquare, Clock, CheckCircle2, MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// --- ADVANCED ANIMATION COMPONENTS ---
+const SpotlightCard = ({ children, className }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  function handleMouseMove({ currentTarget, clientX, clientY }) {
+    let { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+  return (
+    <motion.div
+      className={`relative overflow-hidden group ${className}`}
+      onMouseMove={handleMouseMove}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-[inherit] opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+        style={{ background: useMotionValue((v) => `radial-gradient(600px circle at ${mouseX.get()}px ${mouseY.get()}px, rgba(234, 179, 8, 0.08), transparent 40%)`) }}
+      />
+      {/* Wrapper ensures content stays above the hover glow effect and is fully clickable */}
+      <div className="relative z-10 h-full w-full">
+        {children}
+      </div>
+    </motion.div>
+  );
+};
+
 export default function ContactPage() {
-  // --- INTERNAL ANIMATION STYLES ---
-  const animationStyles = `
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-    .animate-fade-up { animation: fadeUp 0.8s ease-out forwards; opacity: 0; }
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .animate-float { animation: float 3s ease-in-out infinite; }
-  `;
+  const { scrollYProgress } = useScroll();
+  const prefersReducedMotion = useReducedMotion();
+  const yBg1 = useTransform(scrollYProgress, [0, 1], [0, 300]);
+  const yBg2 = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    programInterest: '',
-    message: '',
-  });
-
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', programInterest: '', message: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -68,19 +64,12 @@ export default function ContactPage() {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^[0-9]{10}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
-      newErrors.phone = 'Phone number must be 10 digits';
-    }
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    else if (!/^[0-9]{10}$/.test(formData.phone.replace(/[\s-]/g, ''))) newErrors.phone = 'Phone number must be 10 digits';
     if (!formData.programInterest) newErrors.programInterest = 'Please select a program';
     if (!formData.message.trim()) newErrors.message = 'Message is required';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -92,27 +81,15 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
-      return;
-    }
+    if (!validateForm()) { toast.error('Please fix the errors in the form'); return; }
     setIsSubmitting(true);
-
     try {
       const response = await fetch(`${API_BASE_URL}/inquiries`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: `${formData.programInterest}\n\n${formData.message}`
-        })
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: formData.name, email: formData.email, phone: formData.phone, message: `${formData.programInterest}\n\n${formData.message}` })
       });
-
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to submit inquiry");
-
       toast.success("Thank you! We will contact you shortly.");
       setFormData({ name: "", email: "", phone: "", programInterest: "", message: "" });
     } catch (error) {
@@ -128,288 +105,269 @@ export default function ContactPage() {
   };
 
   return (
-    <div data-testid="contact-page" className="min-h-screen bg-slate-50 font-sans selection:bg-yellow-100">
-      <style>{animationStyles}</style>
+    <div className="bg-slate-50 font-sans selection:bg-yellow-200 overflow-x-hidden">
+      
+      <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-yellow-500 origin-left z-[60] shadow-[0_0_20px_rgba(234,179,8,1)]" style={{ scaleX: scrollYProgress }} />
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative min-h-screen flex flex-col overflow-hidden bg-white pt-24 md:pt-32 pb-10">
-        
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
-            <div className="absolute top-[10%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-blue-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" />
-            <div className="absolute bottom-[10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-yellow-50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-float" style={{ animationDelay: '1.5s' }} />
+      {/* --- HERO SECTION (Single Screen) --- */}
+      <section className="relative w-full h-[100dvh] flex flex-col justify-center items-center overflow-hidden bg-white px-4">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <motion.div style={{ y: prefersReducedMotion ? 0 : yBg1 }} animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 45, 0] }} transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] min-w-[400px] min-h-[400px] bg-blue-100/60 rounded-full blur-[100px] mix-blend-multiply" />
+            <motion.div style={{ y: prefersReducedMotion ? 0 : yBg2 }} animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3], rotate: [0, -45, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute bottom-[10%] right-[-10%] w-[50vw] h-[50vw] min-w-[500px] min-h-[500px] bg-yellow-100/50 rounded-full blur-[100px] mix-blend-multiply" />
         </div>
 
-        {/* Content Container */}
-        <div className="relative z-10 flex-grow flex flex-col justify-center items-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-12 md:mt-0">
-          
-          <div className="animate-fade-up delay-100 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-sm font-semibold mb-6 md:mb-8 shadow-sm">
-            <Sparkles className="w-4 h-4 text-yellow-600" />
+        <div className="relative z-10 w-full max-w-5xl mx-auto text-center flex flex-col items-center mt-8">
+          <motion.div initial={{ opacity: 0, scale: 0.8, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", bounce: 0.6, duration: 1 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/60 backdrop-blur-xl border border-slate-200/80 text-slate-800 text-sm font-bold mb-8 shadow-sm">
+            <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
             <span>We're Here to Help</span>
+          </motion.div>
+
+          <div className="overflow-hidden mb-4">
+            <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] text-slate-900 pb-2 mb-6">
+              Let's Start Your <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600">
+                Career Journey
+              </span>
+            </motion.h1>
           </div>
 
-          <h1 className="animate-fade-up delay-200 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 md:mb-8 leading-tight">
-            Let's Start Your <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-600">
-              Career Journey
-            </span>
-          </h1>
-
-          <p className="animate-fade-up delay-300 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed px-4">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }} className="text-lg md:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-3xl mx-auto font-medium">
             Connect with our program advisors to discuss your career objectives, learn about our training programs, or schedule a consultation.
-          </p>
+          </motion.p>
         </div>
 
-        {/* Scroll Indicator */}
         <button 
-          onClick={scrollToContact}
-          className="relative z-10 animate-fade-up delay-300 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity animate-bounce mt-8 md:mt-12 flex-shrink-0 cursor-pointer pb-8"
-          aria-label="Scroll to contact section"
+          onClick={scrollToContact} 
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400 hover:text-yellow-600 transition-colors z-20 cursor-pointer"
         >
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Get In Touch</span>
-          <ChevronDown className="text-slate-500" />
+          <span className="text-xs font-bold uppercase tracking-widest">Get In Touch</span>
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
+            <ChevronDown className="w-8 h-8" />
+          </motion.div>
         </button>
       </section>
 
-      {/* --- CONTACT MAIN SECTION --- */}
-      <section id="contact-section" className="py-16 md:py-24 bg-slate-50 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+      {/* --- CONTACT MAIN SECTION (Wider & Larger Layout) --- */}
+      <section id="contact-section" className="min-h-[100dvh] flex items-center py-16 lg:py-24 bg-slate-50 relative z-10 border-t border-slate-200/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             
-            {/* LEFT: Contact Info */}
-            <div className="lg:col-span-1 space-y-8 md:space-y-10">
+            {/* LEFT: Contact Info (Takes 5 cols) */}
+            <div className="lg:col-span-5 space-y-8">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
                   Get in Touch
-                </h2>
-                <p className="text-slate-600 leading-relaxed">
-                  Our program advisors are available to discuss your training needs and answer any questions you may have.
-                </p>
+                </motion.h2>
+                <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-slate-600 text-lg font-medium leading-relaxed">
+                  Our advisors are available to discuss your training needs and answer any questions you may have.
+                </motion.p>
               </div>
 
-              <div className="space-y-4 md:space-y-6">
-                
-                {/* Phone (Clickable tel: link) */}
-                <a 
-                  href="tel:+916269391942"
-                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <Phone size={18} className="md:w-5 md:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-1">Phone</h3>
-                    <p className="text-slate-600 font-medium">+91 62693 91942</p>
-                    <p className="text-xs text-slate-400 mt-1">Tap to call us directly</p>
-                  </div>
-                </a>
+              <div className="space-y-4">
+                {/* Phone */}
+                <SpotlightCard className="bg-white rounded-[1.5rem] border border-slate-200/80 shadow-sm hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-yellow-400">
+                  <a href="tel:+916269391942" className="flex items-center gap-5 p-5 w-full text-left outline-none">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
+                      <Phone size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-base mb-0.5">Phone</h3>
+                      <p className="text-slate-600 font-medium text-base">+91 62693 91942</p>
+                    </div>
+                  </a>
+                </SpotlightCard>
 
                 {/* WhatsApp */}
-                <a 
-                  href="https://wa.me/916269391942" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-green-400 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-colors">
-                    <MessageCircle size={18} className="md:w-5 md:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-1">WhatsApp</h3>
-                    <p className="text-slate-600 font-medium">+91 62693 91942</p>
-                    <p className="text-xs text-slate-400 mt-1">Chat with us directly</p>
-                  </div>
-                </a>
+                <SpotlightCard className="bg-white rounded-[1.5rem] border border-slate-200/80 shadow-sm hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-green-400">
+                  <a href="https://wa.me/916269391942" target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-5 w-full text-left outline-none">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-colors duration-300">
+                      <MessageCircle size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-base mb-0.5">WhatsApp</h3>
+                      <p className="text-slate-600 font-medium text-base">+91 62693 91942</p>
+                    </div>
+                  </a>
+                </SpotlightCard>
 
-                {/* Email (Clickable mailto: link) */}
-                <a 
-                  href="mailto:impactyouacademy@gmail.com"
-                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <Mail size={18} className="md:w-5 md:h-5" />
-                  </div>
-                  <div className="overflow-hidden">
-                    <h3 className="font-bold text-slate-900 mb-1">Email</h3>
-                    <p className="text-slate-600 font-medium truncate sm:break-all sm:whitespace-normal">impactyouacademy@gmail.com</p>
-                    <p className="text-xs text-slate-400 mt-1">Tap to send an email</p>
-                  </div>
-                </a>
+                {/* Email (With Fallback Copy to Clipboard) */}
+                <SpotlightCard className="bg-white rounded-[1.5rem] border border-slate-200/80 shadow-sm hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-yellow-400">
+                  <a 
+                    href="mailto:impactyouacademy@gmail.com" 
+                    onClick={(e) => {
+                      navigator.clipboard.writeText('impactyouacademy@gmail.com');
+                      toast.success("Email address copied to clipboard!");
+                    }}
+                    className="flex items-center gap-5 p-5 w-full text-left outline-none overflow-hidden"
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
+                      <Mail size={20} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <h3 className="font-bold text-slate-900 text-base mb-0.5">Email</h3>
+                      <p className="text-slate-600 font-medium text-base truncate">impactyouacademy@gmail.com</p>
+                    </div>
+                  </a>
+                </SpotlightCard>
 
-                {/* Office Location (Clickable Maps link) */}
-                <a 
-                  href="https://www.google.com/maps/search/?api=1&query=315+MG+Road,+Indore,+MP,+India"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group flex items-start gap-4 md:gap-5 p-5 md:p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-yellow-200 transition-all duration-300 cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <MapPin size={18} className="md:w-5 md:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-1">Office Location</h3>
-                    <p className="text-slate-600 font-medium text-sm leading-relaxed">
-                      Impact You Academy<br />
-                      3rd Floor, 315 MG Road<br />
-                      Indore – 452010, MP, India
-                    </p>
-                    <p className="text-xs text-slate-400 mt-2">Tap to view on Google Maps</p>
-                  </div>
-                </a>
-
+                {/* Office Location */}
+                <SpotlightCard className="bg-white rounded-[1.5rem] border border-slate-200/80 shadow-sm hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-yellow-400">
+                  <a href="https://www.google.com/maps/search/?api=1&query=315+MG+Road,+Indore,+MP,+India" target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-5 w-full text-left outline-none">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-base mb-1">Office Location</h3>
+                      <p className="text-slate-600 font-medium text-sm leading-relaxed">
+                        Impact You Academy<br />
+                        3rd Floor, 315 MG Road<br />
+                        Indore – 452010, MP
+                      </p>
+                    </div>
+                  </a>
+                </SpotlightCard>
               </div>
             </div>
 
-            {/* RIGHT: Contact Form */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 sm:p-8 md:p-10">
-                <div className="mb-6 md:mb-8">
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">
-                    <MessageSquare className="text-yellow-500 w-5 h-5 md:w-6 md:h-6" />
+            {/* RIGHT: Contact Form (Takes 7 cols) */}
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.6 }} className="lg:col-span-7">
+              <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-12">
+                <div className="mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
+                    <MessageSquare className="text-yellow-500 w-8 h-8" />
                     Send us a Message
                   </h2>
-                  <p className="text-sm md:text-base text-slate-500 mt-2">Fill out the form below and we'll get back to you shortly.</p>
+                  <p className="text-base text-slate-500 mt-2 font-medium">Fill out the form below and we'll get back to you shortly.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Name */}
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-slate-700 font-medium text-sm">Full Name <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="name" className="text-slate-700 font-bold text-sm">Full Name <span className="text-red-500">*</span></Label>
                       <Input
                         id="name"
                         placeholder="John Doe"
                         value={formData.name}
                         onChange={(e) => handleChange('name', e.target.value)}
-                        className={`h-12 rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 ${errors.name ? 'border-red-500' : ''}`}
+                        className={`h-14 rounded-xl bg-slate-50 border-slate-200/80 focus:border-yellow-400 focus:ring-yellow-100 text-base px-4 ${errors.name ? 'border-red-500' : ''}`}
                       />
-                      {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+                      {errors.name && <p className="text-xs text-red-500 font-bold mt-1">{errors.name}</p>}
                     </div>
 
                     {/* Email */}
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-slate-700 font-medium text-sm">Email Address <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="email" className="text-slate-700 font-bold text-sm">Email Address <span className="text-red-500">*</span></Label>
                       <Input
                         id="email"
                         type="email"
                         placeholder="john@example.com"
                         value={formData.email}
                         onChange={(e) => handleChange('email', e.target.value)}
-                        className={`h-12 rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 ${errors.email ? 'border-red-500' : ''}`}
+                        className={`h-14 rounded-xl bg-slate-50 border-slate-200/80 focus:border-yellow-400 focus:ring-yellow-100 text-base px-4 ${errors.email ? 'border-red-500' : ''}`}
                       />
-                      {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+                      {errors.email && <p className="text-xs text-red-500 font-bold mt-1">{errors.email}</p>}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                      {/* Phone */}
                      <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-slate-700 font-medium text-sm">Phone Number <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="phone" className="text-slate-700 font-bold text-sm">Phone Number <span className="text-red-500">*</span></Label>
                       <Input
                         id="phone"
                         type="tel"
                         placeholder="+91 98765 43210"
                         value={formData.phone}
                         onChange={(e) => handleChange('phone', e.target.value)}
-                        className={`h-12 rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 ${errors.phone ? 'border-red-500' : ''}`}
+                        className={`h-14 rounded-xl bg-slate-50 border-slate-200/80 focus:border-yellow-400 focus:ring-yellow-100 text-base px-4 ${errors.phone ? 'border-red-500' : ''}`}
                       />
-                      {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                      {errors.phone && <p className="text-xs text-red-500 font-bold mt-1">{errors.phone}</p>}
                     </div>
 
                     {/* Program Interest */}
                     <div className="space-y-2">
-                      <Label htmlFor="program" className="text-slate-700 font-medium text-sm">Interested Program <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="program" className="text-slate-700 font-bold text-sm">Interested Program <span className="text-red-500">*</span></Label>
                       <Select
                         value={formData.programInterest}
                         onValueChange={(value) => handleChange('programInterest', value)}
                       >
-                        <SelectTrigger className={`h-12 rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 ${errors.programInterest ? 'border-red-500' : ''}`}>
+                        <SelectTrigger className={`h-14 rounded-xl bg-slate-50 border-slate-200/80 focus:border-yellow-400 focus:ring-yellow-100 text-base px-4 ${errors.programInterest ? 'border-red-500' : ''}`}>
                           <SelectValue placeholder="Select a program" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                           {programs.map((program, index) => (
-                            <SelectItem key={index} value={program}>{program}</SelectItem>
+                            <SelectItem key={index} value={program} className="text-base py-3 cursor-pointer">{program}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.programInterest && <p className="text-xs text-red-500">{errors.programInterest}</p>}
+                      {errors.programInterest && <p className="text-xs text-red-500 font-bold mt-1">{errors.programInterest}</p>}
                     </div>
                   </div>
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-slate-700 font-medium text-sm">Message <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="message" className="text-slate-700 font-bold text-sm">Message <span className="text-red-500">*</span></Label>
                     <Textarea
                       id="message"
                       placeholder="Tell us about your career goals..."
-                      rows={5}
+                      rows={4}
                       value={formData.message}
                       onChange={(e) => handleChange('message', e.target.value)}
-                      className={`rounded-xl bg-slate-50 border-slate-200 focus:border-yellow-400 focus:ring-yellow-100 resize-none ${errors.message ? 'border-red-500' : ''}`}
+                      className={`rounded-xl bg-slate-50 border-slate-200/80 focus:border-yellow-400 focus:ring-yellow-100 resize-none text-base p-4 ${errors.message ? 'border-red-500' : ''}`}
                     />
-                    {errors.message && <p className="text-xs text-red-500">{errors.message}</p>}
+                    {errors.message && <p className="text-xs text-red-500 font-bold mt-1">{errors.message}</p>}
                   </div>
 
-                  <Button
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="submit"
-                    className="w-full h-12 md:h-14 bg-slate-900 text-white font-bold rounded-xl hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300 shadow-lg hover:shadow-yellow-500/20"
+                    className="w-full h-14 bg-slate-900 text-white font-bold text-lg rounded-xl hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2 group mt-4"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Sending...' : (
-                      <span className="flex items-center gap-2">
-                        Submit Inquiry <Send size={18} />
-                      </span>
+                      <>Submit Inquiry <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
                     )}
-                  </Button>
+                  </motion.button>
                   
-                  <p className="text-xs text-slate-400 text-center mt-4">
-                    By submitting this form, you agree to our privacy policy and to be contacted regarding your inquiry.
+                  <p className="text-sm text-slate-400 text-center mt-4 font-medium">
+                    By submitting, you agree to our privacy policy.
                   </p>
                 </form>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* --- WHAT TO EXPECT SECTION --- */}
-      <section className="py-16 md:py-24 bg-white border-t border-slate-100 overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10 md:mb-12">
+      <section className="py-24 bg-white border-t border-slate-200/50 overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-16 tracking-tight">
             What Happens Next?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 relative">
-            
+          </motion.h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
             {/* Connecting Line (Desktop Only) */}
-            <div className="hidden md:block absolute top-12 left-[20%] right-[20%] h-0.5 bg-slate-100 -z-10" />
+            <div className="hidden md:block absolute top-12 left-[20%] right-[20%] h-1 bg-slate-100 -z-10 rounded-full" />
             
             {/* Connecting Line (Mobile Only) */}
-            <div className="md:hidden absolute top-12 bottom-12 left-1/2 w-0.5 bg-slate-100 -translate-x-1/2 -z-10" />
+            <div className="md:hidden absolute top-12 bottom-12 left-1/2 w-1 bg-slate-100 -translate-x-1/2 -z-10 rounded-full" />
 
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
-                <Clock className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
-              </div>
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">1. Initial Contact</h3>
-              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">Our advisor reviews your inquiry and reaches out within 24 hours.</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
-                <MessageSquare className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
-              </div>
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">2. Consultation</h3>
-              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">A detailed discussion to align our programs with your career goals.</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full border-4 border-yellow-50 flex items-center justify-center mb-4 md:mb-6 shadow-sm z-10">
-                <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-yellow-500" />
-              </div>
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 bg-white px-2">3. Enrollment</h3>
-              <p className="text-slate-500 text-sm px-4 md:px-0 max-w-[250px] mx-auto">We guide you through the seamless admission and onboarding process.</p>
-            </div>
-
+            {[
+              { icon: Clock, title: "1. Initial Contact", desc: "Our advisor reviews your inquiry and reaches out within 24 hours." },
+              { icon: MessageSquare, title: "2. Consultation", desc: "A detailed discussion to align our programs with your career goals." },
+              { icon: CheckCircle2, title: "3. Enrollment", desc: "We guide you through the seamless admission and onboarding process." }
+            ].map((step, idx) => (
+              <motion.div key={idx} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.2 }} className="flex flex-col items-center">
+                <div className="w-24 h-24 bg-white rounded-full border-[6px] border-slate-50 flex items-center justify-center mb-6 shadow-xl shadow-slate-200/50 z-10 text-yellow-500">
+                  <step.icon className="w-10 h-10" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3 bg-white px-4 tracking-tight">{step.title}</h3>
+                <p className="text-slate-600 text-base px-4 max-w-[280px] mx-auto font-medium leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
