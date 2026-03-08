@@ -33,7 +33,7 @@ export const createProgram = async (programData, token) => {
   return data;
 };
 
-// Toggle status
+// deactivate status
 export const toggleProgramStatus = async (id, token) => {
   const response = await fetch(`${API_BASE_URL}/api/programs/${id}/deactivate`, {
     method: "PATCH",
