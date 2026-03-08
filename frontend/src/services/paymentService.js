@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const createPaymentOrder = async (programId, token) => {
-  const res = await fetch(`${API_BASE_URL}/payments/create-order`, {
+  const res = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchEnrollments = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/enrollments`, {
+  const response = await fetch(`${API_BASE_URL}/api/enrollments`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -17,7 +17,7 @@ export const fetchEnrollments = async (token) => {
 };
 export const updateEnrollmentStatus = async (id, status, token) => {
   const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/enrollments/${id}/status`,
+    `${import.meta.env.VITE_API_BASE_URL}/api/enrollments/${id}/status`,
     {
       method: "PATCH",
       headers: {

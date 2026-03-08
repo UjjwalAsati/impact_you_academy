@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchPrograms = async () => {
-  const response = await fetch(`${API_BASE_URL}/programs`);
+  const response = await fetch(`${API_BASE_URL}/api/programs`);
 
   const data = await response.json();
 
@@ -12,7 +12,7 @@ export const fetchPrograms = async () => {
   return data;
 };
 export const fetchProgramById = async (programId) => {
-  const response = await fetch(`${API_BASE_URL}/programs/${programId}`);
+  const response = await fetch(`${API_BASE_URL}/api/programs/${programId}`);
 
   const data = await response.json();
 
