@@ -96,23 +96,22 @@ exports.updateProgram = async (req, res) => {
 };
 
 // ==============================
-// ADMIN: Deactivate Program
+// ADMIN: Delete Program
 // ==============================
 exports.deactivateProgram = async (req, res) => {
   try {
-    const program = await Program.findById(req.params.id);
+    const program = await Program.findByIdAndDelete(req.params.id);
 
-    if (!program)
+    if (!program) {
       return res.status(404).json({ message: "Program not found" });
-
-    program.isActive = false;
-    await program.save();
+    }
 
     res.json({
-      message: "Program deactivated successfully",
-      program
+      message: "Program deleted successfully"
     });
+
   } catch (error) {
-    res.status(500).json({ message: "Failed to deactivate program" });
+    console.error("Delete program error:", error);
+    res.status(500).json({ message: "Failed to delete program" });
   }
 };
