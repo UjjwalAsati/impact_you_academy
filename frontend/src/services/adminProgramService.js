@@ -1,8 +1,9 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Fetch all programs (admin view)
+// Fetch all programs
 export const fetchPrograms = async () => {
-  const response = await fetch(`${API_BASE_URL}/programs`);
+  const response = await fetch(`${API_BASE_URL}/api/programs`);
+
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,9 +13,9 @@ export const fetchPrograms = async () => {
   return data;
 };
 
-// Create new program (admin only)
+// Create program
 export const createProgram = async (programData, token) => {
-  const response = await fetch(`${API_BASE_URL}/programs`, {
+  const response = await fetch(`${API_BASE_URL}/api/programs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,16 +32,15 @@ export const createProgram = async (programData, token) => {
 
   return data;
 };
+
+// Toggle status
 export const toggleProgramStatus = async (id, token) => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/programs/${id}/toggle`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  const response = await fetch(`${API_BASE_URL}/api/programs/${id}/deactivate`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  );
+  });
 
   const data = await response.json();
 
