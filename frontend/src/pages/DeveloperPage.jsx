@@ -1083,7 +1083,7 @@ export default function DevelopersPage() {
           {/* Final CTA */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-4 flex-wrap mb-8">
-              <a href="mailto:ujjwalasati@gmail.com"
+              <a href="mailto:ujjwal4.asati4@gmail.com"
                 className="btn-flow flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold"
                 style={{ background: t.uaDim, color: t.ua, border: `1.5px solid ${t.ua}50`, textDecoration: 'none', boxShadow: `0 0 20px ${t.uaGlow}` }}>
                 <Send size={15} /> Email Ujjwal
