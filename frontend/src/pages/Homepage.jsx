@@ -239,7 +239,12 @@ export default function HomePage() {
             className="flex flex-col sm:flex-row gap-5 justify-center items-center"
           >
             <MagneticWrapper>
-              <Link to="/contact" className="block w-full sm:w-auto">
+              <a
+              href="https://drive.google.com/file/d/1G-_jMKPms0HqLSMiWzvgs-fW85eYMM1f/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full sm:w-auto"
+            >
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -255,7 +260,7 @@ export default function HomePage() {
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 w-1/2" 
                   />
                 </motion.button>
-              </Link>
+              </a>
             </MagneticWrapper>
 
             <MagneticWrapper>

@@ -183,11 +183,22 @@ export default function StaffingTrainingPage() {
               </Link>
             </MagneticWrapper>
             <MagneticWrapper>
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-4 bg-white/60 backdrop-blur-md border border-slate-200 text-slate-900 font-bold rounded-full hover:border-yellow-400 hover:bg-white transition-colors shadow-sm">
-                  <Download size={20} className="text-yellow-600" />
-                  Download Brochure
+            <a
+              href="https://drive.google.com/uc?export=download&id=1G-_jMKPms0HqLSMiWzvgs-fW85eYMM1f"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <motion.button 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }} 
+                className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-4 bg-white/60 backdrop-blur-md border border-slate-200 text-slate-900 font-bold rounded-full hover:border-yellow-400 hover:bg-white transition-colors shadow-sm"
+              >
+                <Download size={20} className="text-yellow-600" />
+                Download Brochure
               </motion.button>
-            </MagneticWrapper>
+            </a>
+          </MagneticWrapper>
           </motion.div>
         </div>
 
@@ -421,11 +432,16 @@ export default function StaffingTrainingPage() {
           <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto font-medium">Join the next cohort and get certified.</motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, type: "spring" }} className="flex justify-center">
              <MagneticWrapper>
-               <Link to="/contact">
+               <a
+                href="https://drive.google.com/uc?export=download&id=1G-_jMKPms0HqLSMiWzvgs-fW85eYMM1f"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 rounded-full bg-yellow-500 text-slate-900 font-bold text-xl transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:shadow-[0_0_60px_rgba(234,179,8,0.6)] flex items-center gap-3">
                    Get Full Brochure <Download size={24} />
                  </motion.button>
-               </Link>
+               </a>
              </MagneticWrapper>
           </motion.div>
         </div>

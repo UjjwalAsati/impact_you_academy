@@ -257,7 +257,12 @@ export default function CurriculumPage() {
             Download the comprehensive program brochure with detailed session schedules, learning resources, and pricing.
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, type: "spring" }} className="flex justify-center">
-             <Link to="/contact">
+                <a
+                href="https://drive.google.com/uc?export=download&id=1G-_jMKPms0HqLSMiWzvgs-fW85eYMM1f"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="group inline-flex items-center gap-3 px-8 py-4 bg-yellow-500 text-slate-900 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:shadow-[0_0_60px_rgba(234,179,8,0.6)] transition-all overflow-hidden">
                  <Download className="w-5 h-5" />
                  <span className="relative z-10 flex items-center gap-2">
@@ -265,7 +270,7 @@ export default function CurriculumPage() {
                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                  </span>
                </motion.button>
-             </Link>
+             </a>
           </motion.div>
         </div>
       </section>
