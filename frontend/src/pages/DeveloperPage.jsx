@@ -1028,7 +1028,7 @@ export default function DevelopersPage() {
           {/* Dev contact cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14 collab-grid">
             {[
-              { init: 'UA', name: 'Ujjwal Asati', role: 'Backend Engineer', tag: 'APIs · Systems · Auth', c: t.ua, dim: t.uaDim, glow: t.uaGlow, email: 'ujjwalasati@gmail.com', li: 'https://www.linkedin.com/in/ujjwal-asati-20527828b/', gh: 'https://github.com/UjjwalAsati', perks: ['REST APIs', 'Auth Systems', 'Database Design', 'Payment Integration'] },
+              { init: 'UA', name: 'Ujjwal Asati', role: 'Backend Engineer', tag: 'APIs · Systems · Auth', c: t.ua, dim: t.uaDim, glow: t.uaGlow, email: 'ujjwal4.asati4@gmail.com', li: 'https://www.linkedin.com/in/ujjwal-asati-20527828b/', gh: 'https://github.com/UjjwalAsati', perks: ['REST APIs', 'Auth Systems', 'Database Design', 'Payment Integration'] },
               { init: 'SK', name: 'Sai Kaushik', role: 'Frontend Engineer', tag: 'UI/UX · Design · React', c: t.ka, dim: t.kaDim, glow: t.kaGlow, email: 'chundurisaikaushik@gmail.com', li: 'https://www.linkedin.com/in/sai-kaushik-chunduri-a6130228b/', gh: 'https://github.com/Kaushik-verse', perks: ['Landing Pages', 'Design Systems', 'Animations', 'Dashboard UI'] },
             ].map((dev, i) => (
               <div key={dev.name}
