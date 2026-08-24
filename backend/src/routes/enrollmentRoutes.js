@@ -1,19 +1,46 @@
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const enrollmentController = require('../controllers/enrollmentController');
-const { protect, adminOnly } = require('../middlewares/authMiddleware');
+const enrollmentController = require("../controllers/enrollmentController");
 
-/**
- * USER routes
- */
-router.post('/', protect, enrollmentController.createEnrollment);
-router.get('/my', protect, enrollmentController.getMyEnrollments);
+const {
+  protect,
+  adminOnly
+} = require("../middlewares/authMiddleware");
 
-/**
- * ADMIN routes
- */
-router.get('/', protect, adminOnly, enrollmentController.getAllEnrollments);
-router.patch('/:id/status', protect, adminOnly, enrollmentController.updateEnrollmentStatus);
+// ==============================
+// USER ROUTES
+// ==============================
+
+router.post(
+  "/",
+  protect,
+  enrollmentController.createEnrollment
+);
+
+router.get(
+  "/my",
+  protect,
+  enrollmentController.getMyEnrollments
+);
+
+// ==============================
+// ADMIN ROUTES
+// ==============================
+
+router.get(
+  "/",
+  protect,
+  adminOnly,
+  enrollmentController.getAllEnrollments
+);
+
+router.patch(
+  "/:id/status",
+  protect,
+  adminOnly,
+  enrollmentController.updateEnrollmentStatus
+);
 
 module.exports = router;

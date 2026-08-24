@@ -34,7 +34,7 @@ const pendingUserSchema = new mongoose.Schema(
 );
 
 /**
- * 🔐 Hash password before saving
+ * Hash password before saving
  */
 pendingUserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
@@ -42,7 +42,7 @@ pendingUserSchema.pre("save", async function () {
 });
 
 /**
- * 🕒 Auto delete after expiry
+ * Auto delete after expiry
  */
 pendingUserSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 

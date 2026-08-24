@@ -19,7 +19,7 @@ export default function VerifyEmail() {
 
     const verify = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/auth/verify-email/${token}`);
+        const res = await fetch(`${API_BASE_URL}/api/auth/verify-email/${token}`);
         const data = await res.json();
         if (!res.ok) {
           setStatus("error");

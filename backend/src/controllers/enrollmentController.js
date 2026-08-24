@@ -1,112 +1,140 @@
-const Enrollment = require('../models/Enrollment');
-const Program = require('../models/Program');
+const Enrollment = require("../models/Enrollment");
+const Program = require("../models/Program");
 
-/**
- * USER: Enroll in a program
- * Creates enrollment with status = pending
- */
+// ==============================
+// USER: Create Enrollment
+// ==============================
 exports.createEnrollment = async (req, res) => {
-  const userId = req.user._id;
-  const { programId } = req.body;
-
-  if (!programId) {
-    return res.status(400).json({ message: 'Program ID is required' });
-  }
-
-  const program = await Program.findById(programId);
-  if (!program) {
-    return res.status(404).json({ message: 'Program not found' });
-  }
-
-  // Prevent duplicate enrollment
-  const existingEnrollment = await Enrollment.findOne({
-    user: userId,
-    program: programId
-  });
-
-  if (existingEnrollment) {
-    return res.status(400).json({ message: 'Already enrolled in this program' });
-  }
-
-  const enrollment = await Enrollment.create({
-    user: userId,
-    program: programId,
-    status: 'pending'
-  });
-
-  res.status(201).json({
-    message: 'Enrollment created',
-    enrollment
-  });
-};
-
-/**
- * USER: Get my enrollments
- */
-exports.getMyEnrollments = async (req, res) => {
-  const enrollments = await Enrollment.find({ user: req.user._id })
-    .populate('program', 'title duration price status')
-    .sort({ createdAt: -1 });
-
-  res.json(enrollments);
-};
-
-/**
- * ADMIN: Get all enrollments
- */
-exports.getAllEnrollments = async (req, res) => {
   try {
-    const enrollments = await Enrollment.find()
-      .populate('user', 'name email')
-      .populate('program', 'title duration price')
+    const userId = req.user._id;
+    const { programId } = req.body;
+
+    if (!programId) {
+      return res.status(400).json({
+        message: "Program ID is required"
+      });
+    }
+
+    const program = await Program.findById(programId);
+
+    if (!program || !program.isActive) {
+      return res.status(404).json({
+        message: "Program not found"
+      });
+    }
+
+    const existingEnrollment = await Enrollment.findOne({
+      user: userId,
+      program: programId
+    });
+
+    if (existingEnrollment) {
+      return res.status(400).json({
+        message: "Already enrolled in this program",
+        enrollment: existingEnrollment
+      });
+    }
+
+    const enrollment = await Enrollment.create({
+      user: userId,
+      program: programId,
+      totalAmount: program.price,
+      paidAmount: 0,
+      remainingAmount: program.price,
+      paymentStatus: "unpaid",
+      status: "pending"
+    });
+
+    res.status(201).json({
+      message: "Enrollment created",
+      enrollment
+    });
+  } catch (error) {
+    console.error("Create enrollment error:", error);
+
+    // Handles duplicate index race condition
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Already enrolled in this program"
+      });
+    }
+
+    res.status(500).json({
+      message: "Failed to create enrollment"
+    });
+  }
+};
+
+// ==============================
+// USER: Get My Enrollments
+// ==============================
+exports.getMyEnrollments = async (req, res) => {
+  try {
+    const enrollments = await Enrollment.find({
+      user: req.user._id
+    })
+      .populate(
+        "program",
+        "title duration price allowSeatBooking seatBookingAmount"
+      )
       .sort({ createdAt: -1 });
 
     res.json(enrollments);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch enrollments" });
+    console.error("Get my enrollments error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch enrollments"
+    });
   }
 };
 
+// ==============================
+// ADMIN: Get All Enrollments
+// ==============================
+exports.getAllEnrollments = async (req, res) => {
+  try {
+    const enrollments = await Enrollment.find()
+      .populate("user", "name email")
+      .populate(
+        "program",
+        "title duration price allowSeatBooking seatBookingAmount"
+      )
+      .sort({ createdAt: -1 });
 
-/**
- * ADMIN: Update enrollment status
- */
-exports.updateEnrollmentStatus = async (req, res) => {
-  const { status } = req.body;
+    res.json(enrollments);
+  } catch (error) {
+    console.error("Get all enrollments error:", error);
 
-  if (!['pending', 'active', 'completed'].includes(status)) {
-    return res.status(400).json({ message: 'Invalid status value' });
+    res.status(500).json({
+      message: "Failed to fetch enrollments"
+    });
   }
-
-  const enrollment = await Enrollment.findById(req.params.id);
-  if (!enrollment) {
-    return res.status(404).json({ message: 'Enrollment not found' });
-  }
-
-  enrollment.status = status;
-  await enrollment.save();
-
-  res.json({
-    message: 'Enrollment status updated',
-    enrollment
-  });
 };
-// ADMIN: Update enrollment status
+
+// ==============================
+// ADMIN: Update Enrollment Status
+// ==============================
 exports.updateEnrollmentStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
     if (!["pending", "active", "completed"].includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
+      return res.status(400).json({
+        message: "Invalid status"
+      });
     }
 
     const enrollment = await Enrollment.findById(req.params.id);
 
     if (!enrollment) {
-      return res.status(404).json({ message: "Enrollment not found" });
+      return res.status(404).json({
+        message: "Enrollment not found"
+      });
     }
 
     enrollment.status = status;
+
     await enrollment.save();
 
     res.json({
@@ -114,6 +142,10 @@ exports.updateEnrollmentStatus = async (req, res) => {
       enrollment
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update enrollment status" });
+    console.error("Update enrollment status error:", error);
+
+    res.status(500).json({
+      message: "Failed to update enrollment status"
+    });
   }
 };

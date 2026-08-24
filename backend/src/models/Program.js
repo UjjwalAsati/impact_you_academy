@@ -2,12 +2,37 @@ const mongoose = require("mongoose");
 
 const programSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    title: {
+      type: String,
+      required: true
+    },
+
     description: String,
+
     duration: String,
-    price: { type: Number, required: true },
+
+    // Full course price in INR
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+
+    // Whether students can reserve a seat by paying a smaller amount
+    allowSeatBooking: {
+      type: Boolean,
+      default: false
+    },
+
+    // Amount required to reserve a seat
+    seatBookingAmount: {
+      type: Number,
+      default: 999,
+      min: 1
+    },
 
     certification: String,
+
     schedule: String,
 
     learningOutcomes: [String],

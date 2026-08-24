@@ -56,20 +56,27 @@ export default function ProgramsPage() {
 
   const handleEnrollClick = (program) => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
+
     if (isAdmin) {
-      alert('Admins cannot enroll in programs.');
+      alert("Admins cannot enroll in programs.");
       return;
     }
+
     addToCart({
       _id: program._id,
       title: program.title,
       price: program.price,
       duration: program.duration,
+
+      // Payment settings
+      allowSeatBooking: program.allowSeatBooking || false,
+      seatBookingAmount: program.seatBookingAmount || 999,
     });
-    navigate('/payment');
+
+    navigate("/payment");
   };
 
   // --- INTERNAL STYLES FOR ANIMATIONS ---

@@ -21,6 +21,11 @@ const AdminPrograms = () => {
     description: "",
     duration: "",
     price: "",
+
+    // PAYMENT OPTIONS
+    allowSeatBooking: false,
+    seatBookingAmount: 999,
+
     certification: "",
     schedule: "",
     learningOutcomes: ""
@@ -34,7 +39,9 @@ const AdminPrograms = () => {
   const loadPrograms = async () => {
     try {
       setLoading(true);
+
       const data = await fetchPrograms(token);
+
       setPrograms(data);
     } catch (err) {
       setError(err.message);
@@ -44,37 +51,72 @@ const AdminPrograms = () => {
   };
 
   useEffect(() => {
-    if (token) loadPrograms();
+    if (token) {
+      loadPrograms();
+    }
   }, [token]);
 
   // ==============================
   // HANDLE INPUT CHANGE
   // ==============================
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // ==============================
+  // HANDLE SEAT BOOKING TOGGLE
+  // ==============================
+  const handleSeatBookingChange = (e) => {
+    const enabled = e.target.checked;
+
+    setFormData((prev) => ({
+      ...prev,
+      allowSeatBooking: enabled,
+
+      // Keep default ₹999 when enabled
+      seatBookingAmount:
+        prev.seatBookingAmount || 999
+    }));
+  };
 
   // ==============================
   // MODULE HANDLING
   // ==============================
   const addModule = () => {
-    setModules([...modules, { title: "", topics: "" }]);
+    setModules([
+      ...modules,
+      {
+        title: "",
+        topics: ""
+      }
+    ]);
   };
 
   const updateModule = (index, field, value) => {
     const updated = [...modules];
+
     updated[index][field] = value;
+
     setModules(updated);
   };
 
   const removeModule = (index) => {
-    setModules(modules.filter((_, i) => i !== index));
+    setModules(
+      modules.filter((_, i) => i !== index)
+    );
   };
 
   // ==============================
-  // SUBMIT (CREATE / UPDATE)
+  // SUBMIT CREATE / UPDATE
   // ==============================
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError(null);
 
     if (!formData.title || !formData.price) {
@@ -82,47 +124,115 @@ const AdminPrograms = () => {
       return;
     }
 
+    // Validate seat booking amount
+    if (
+      formData.allowSeatBooking &&
+      (
+        !formData.seatBookingAmount ||
+        Number(formData.seatBookingAmount) <= 0
+      )
+    ) {
+      setError(
+        "Please enter a valid seat booking amount"
+      );
+      return;
+    }
+
+    // Seat booking cannot be greater than course fee
+    if (
+      formData.allowSeatBooking &&
+      Number(formData.seatBookingAmount) >=
+        Number(formData.price)
+    ) {
+      setError(
+        "Seat booking amount must be less than the total course price"
+      );
+      return;
+    }
+
     try {
       setSubmitting(true);
 
-      await createProgram(
-        {
-          ...formData,
-          price: Number(formData.price),
-          learningOutcomes: formData.learningOutcomes
-            ? formData.learningOutcomes.split(",").map((item) => item.trim())
+      const programData = {
+        ...formData,
+
+        price: Number(formData.price),
+
+        // PAYMENT SETTINGS
+        allowSeatBooking:
+          Boolean(formData.allowSeatBooking),
+
+        seatBookingAmount:
+          formData.allowSeatBooking
+            ? Number(formData.seatBookingAmount)
+            : 999,
+
+        learningOutcomes:
+          formData.learningOutcomes
+            ? formData.learningOutcomes
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
             : [],
-          modules: modules.map((mod) => ({
-            title: mod.title,
-            topics: mod.topics
-              ? mod.topics.split(",").map((t) => t.trim())
-              : []
-          }))
-        },
+
+        modules: modules.map((mod) => ({
+          title: mod.title,
+
+          topics: mod.topics
+            ? mod.topics
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean)
+            : []
+        }))
+      };
+
+      console.log(
+        "PROGRAM DATA BEING SENT:",
+        programData
+      );
+
+      await createProgram(
+        programData,
         token,
         editingId
       );
 
       resetForm();
-      loadPrograms();
+
+      await loadPrograms();
     } catch (err) {
+      console.error(
+        "Program save error:",
+        err
+      );
+
       setError(err.message);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // ==============================
+  // RESET FORM
+  // ==============================
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
       duration: "",
       price: "",
+
+      allowSeatBooking: false,
+      seatBookingAmount: 999,
+
       certification: "",
       schedule: "",
       learningOutcomes: ""
     });
+
     setModules([]);
+
     setEditingId(null);
   };
 
@@ -131,25 +241,42 @@ const AdminPrograms = () => {
   // ==============================
   const handleEdit = (program) => {
     setFormData({
-      title: program.title,
-      description: program.description,
-      duration: program.duration,
-      price: program.price,
-      certification: program.certification || "",
-      schedule: program.schedule || "",
-      learningOutcomes: program.learningOutcomes?.join(", ") || ""
+      title: program.title || "",
+      description: program.description || "",
+      duration: program.duration || "",
+      price: program.price || "",
+
+      // PAYMENT SETTINGS
+      allowSeatBooking:
+        program.allowSeatBooking || false,
+
+      seatBookingAmount:
+        program.seatBookingAmount || 999,
+
+      certification:
+        program.certification || "",
+
+      schedule:
+        program.schedule || "",
+
+      learningOutcomes:
+        program.learningOutcomes?.join(", ") || ""
     });
 
     setModules(
       program.modules?.map((mod) => ({
-        title: mod.title,
-        topics: mod.topics?.join(", ")
+        title: mod.title || "",
+        topics:
+          mod.topics?.join(", ") || ""
       })) || []
     );
 
     setEditingId(program._id);
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
 
   // ==============================
@@ -158,9 +285,12 @@ const AdminPrograms = () => {
   const handleDeactivate = async (id) => {
     try {
       await toggleProgramStatus(id, token);
+
       loadPrograms();
     } catch (err) {
       console.error(err);
+
+      setError(err.message);
     }
   };
 
@@ -169,14 +299,20 @@ const AdminPrograms = () => {
 
       {/* HEADER */}
       <div className="border-b pb-5">
-        <h1 className="text-3xl font-bold">Program Management</h1>
+        <h1 className="text-3xl font-bold">
+          Program Management
+        </h1>
       </div>
 
       {/* ================= FORM ================= */}
       <div className="bg-white p-8 rounded-xl shadow border">
+
         <div className="flex items-center gap-2 mb-6 font-bold text-lg">
           <Plus size={18} />
-          {editingId ? "Edit Program" : "Create New Program"}
+
+          {editingId
+            ? "Edit Program"
+            : "Create New Program"}
         </div>
 
         {error && (
@@ -185,8 +321,12 @@ const AdminPrograms = () => {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
 
+          {/* TITLE */}
           <input
             type="text"
             name="title"
@@ -196,6 +336,7 @@ const AdminPrograms = () => {
             className="w-full p-3 border rounded"
           />
 
+          {/* DESCRIPTION */}
           <textarea
             name="description"
             placeholder="Program Description"
@@ -204,7 +345,9 @@ const AdminPrograms = () => {
             className="w-full p-3 border rounded"
           />
 
+          {/* DURATION + PRICE */}
           <div className="grid grid-cols-2 gap-4">
+
             <input
               type="text"
               name="duration"
@@ -213,16 +356,108 @@ const AdminPrograms = () => {
               onChange={handleChange}
               className="p-3 border rounded"
             />
+
             <input
               type="number"
               name="price"
               placeholder="Price"
+              min="1"
               value={formData.price}
               onChange={handleChange}
               className="p-3 border rounded"
             />
+
           </div>
 
+          {/* ==============================
+              PAYMENT OPTIONS
+          ============================== */}
+          <div className="border rounded-xl p-5 bg-slate-50">
+
+            <h3 className="font-bold text-lg mb-1">
+              Payment Options
+            </h3>
+
+            <p className="text-sm text-gray-500 mb-5">
+              Choose whether students can reserve
+              their seat by paying an advance amount.
+            </p>
+
+            {/* FULL PAYMENT */}
+            <div className="border rounded-lg bg-white p-4 mb-4">
+
+              <div className="font-semibold">
+                Full Payment
+              </div>
+
+              <p className="text-sm text-gray-500 mt-1">
+                Students can pay the complete course
+                fee at once.
+              </p>
+
+            </div>
+
+            {/* SEAT BOOKING CHECKBOX */}
+            <label className="flex items-center gap-3 cursor-pointer">
+
+              <input
+                type="checkbox"
+                name="allowSeatBooking"
+                checked={formData.allowSeatBooking}
+                onChange={handleSeatBookingChange}
+                className="w-5 h-5"
+              />
+
+              <div>
+                <div className="font-semibold">
+                  Allow Seat Booking
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  Student can pay an advance amount
+                  and pay the remaining fee later.
+                </div>
+              </div>
+
+            </label>
+
+            {/* SEAT BOOKING AMOUNT */}
+            {formData.allowSeatBooking && (
+              <div className="mt-5">
+
+                <label className="block text-sm font-semibold mb-2">
+                  Seat Booking Amount
+                </label>
+
+                <div className="flex items-center">
+
+                  <span className="bg-gray-100 border border-r-0 rounded-l px-4 py-3">
+                    ₹
+                  </span>
+
+                  <input
+                    type="number"
+                    name="seatBookingAmount"
+                    min="1"
+                    value={formData.seatBookingAmount}
+                    onChange={handleChange}
+                    className="w-full p-3 border rounded-r"
+                    placeholder="999"
+                  />
+
+                </div>
+
+                <p className="text-xs text-gray-500 mt-2">
+                  Example: Course fee ₹4,099 →
+                  student pays ₹999 now and ₹3,100 later.
+                </p>
+
+              </div>
+            )}
+
+          </div>
+
+          {/* CERTIFICATION */}
           <input
             type="text"
             name="certification"
@@ -232,6 +467,7 @@ const AdminPrograms = () => {
             className="w-full p-3 border rounded"
           />
 
+          {/* SCHEDULE */}
           <input
             type="text"
             name="schedule"
@@ -241,6 +477,7 @@ const AdminPrograms = () => {
             className="w-full p-3 border rounded"
           />
 
+          {/* LEARNING OUTCOMES */}
           <input
             type="text"
             name="learningOutcomes"
@@ -252,16 +489,27 @@ const AdminPrograms = () => {
 
           {/* MODULES */}
           <div>
-            <h3 className="font-bold mb-3">Modules</h3>
+
+            <h3 className="font-bold mb-3">
+              Modules
+            </h3>
 
             {modules.map((mod, index) => (
-              <div key={index} className="border p-4 rounded mb-3 space-y-2">
+              <div
+                key={index}
+                className="border p-4 rounded mb-3 space-y-2"
+              >
+
                 <input
                   type="text"
                   placeholder="Module Title"
                   value={mod.title}
                   onChange={(e) =>
-                    updateModule(index, "title", e.target.value)
+                    updateModule(
+                      index,
+                      "title",
+                      e.target.value
+                    )
                   }
                   className="w-full p-2 border rounded"
                 />
@@ -271,18 +519,25 @@ const AdminPrograms = () => {
                   placeholder="Topics (comma separated)"
                   value={mod.topics}
                   onChange={(e) =>
-                    updateModule(index, "topics", e.target.value)
+                    updateModule(
+                      index,
+                      "topics",
+                      e.target.value
+                    )
                   }
                   className="w-full p-2 border rounded"
                 />
 
                 <button
                   type="button"
-                  onClick={() => removeModule(index)}
+                  onClick={() =>
+                    removeModule(index)
+                  }
                   className="text-red-600 text-xs"
                 >
                   Remove Module
                 </button>
+
               </div>
             ))}
 
@@ -293,8 +548,10 @@ const AdminPrograms = () => {
             >
               + Add Module
             </button>
+
           </div>
 
+          {/* SUBMIT */}
           <button
             type="submit"
             disabled={submitting}
@@ -308,47 +565,122 @@ const AdminPrograms = () => {
               "Add Program"
             )}
           </button>
+
         </form>
       </div>
 
       {/* ================= PROGRAM TABLE ================= */}
       <div className="bg-white rounded-xl shadow border overflow-hidden">
+
         <table className="w-full text-sm">
+
           <thead className="bg-gray-100 text-xs uppercase">
+
             <tr>
-              <th className="p-4 text-left">Title</th>
-              <th className="p-4 text-left">Duration</th>
-              <th className="p-4 text-left">Price</th>
-              <th className="p-4 text-left">Status</th>
-              <th className="p-4 text-right">Actions</th>
+              <th className="p-4 text-left">
+                Title
+              </th>
+
+              <th className="p-4 text-left">
+                Duration
+              </th>
+
+              <th className="p-4 text-left">
+                Price
+              </th>
+
+              <th className="p-4 text-left">
+                Seat Booking
+              </th>
+
+              <th className="p-4 text-left">
+                Status
+              </th>
+
+              <th className="p-4 text-right">
+                Actions
+              </th>
             </tr>
+
           </thead>
 
           <tbody>
+
             {loading ? (
+
               <tr>
-                <td colSpan="5" className="p-6 text-center">
+                <td
+                  colSpan="6"
+                  className="p-6 text-center"
+                >
                   Loading...
                 </td>
               </tr>
+
             ) : programs.length === 0 ? (
+
               <tr>
-                <td colSpan="5" className="p-6 text-center">
+                <td
+                  colSpan="6"
+                  className="p-6 text-center"
+                >
                   No programs found.
                 </td>
               </tr>
+
             ) : (
+
               programs.map((prog) => (
-                <tr key={prog._id} className="border-t">
-                  <td className="p-4 font-bold">{prog.title}</td>
-                  <td className="p-4">{prog.duration}</td>
-                  <td className="p-4">₹{prog.price}</td>
-                  <td className="p-4">
-                    {prog.isActive ? "Active" : "Inactive"}
+
+                <tr
+                  key={prog._id}
+                  className="border-t"
+                >
+
+                  <td className="p-4 font-bold">
+                    {prog.title}
                   </td>
+
+                  <td className="p-4">
+                    {prog.duration}
+                  </td>
+
+                  <td className="p-4">
+                    ₹{prog.price}
+                  </td>
+
+                  <td className="p-4">
+
+                    {prog.allowSeatBooking ? (
+                      <div>
+                        <span className="text-green-600 font-semibold">
+                          Enabled
+                        </span>
+
+                        <div className="text-xs text-gray-500">
+                          ₹{prog.seatBookingAmount}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-gray-500">
+                        Disabled
+                      </span>
+                    )}
+
+                  </td>
+
+                  <td className="p-4">
+                    {prog.isActive
+                      ? "Active"
+                      : "Inactive"}
+                  </td>
+
                   <td className="p-4 text-right space-x-2">
+
                     <button
-                      onClick={() => handleEdit(prog)}
+                      onClick={() =>
+                        handleEdit(prog)
+                      }
                       className="px-3 py-1 text-xs border rounded"
                     >
                       Edit
@@ -356,19 +688,31 @@ const AdminPrograms = () => {
 
                     {prog.isActive && (
                       <button
-                        onClick={() => handleDeactivate(prog._id)}
+                        onClick={() =>
+                          handleDeactivate(
+                            prog._id
+                          )
+                        }
                         className="px-3 py-1 text-xs bg-red-600 text-white rounded"
                       >
                         Deactivate
                       </button>
                     )}
+
                   </td>
+
                 </tr>
+
               ))
+
             )}
+
           </tbody>
+
         </table>
+
       </div>
+
     </div>
   );
 };
