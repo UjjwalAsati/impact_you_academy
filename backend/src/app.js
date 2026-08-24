@@ -1,14 +1,22 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 
 /* Security */
 app.use(helmet());
-app.use(cors({ origin: true, credentials: true }));
-app.set('trust proxy', 1);
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
+
+app.set("trust proxy", 1);
+
 /* Rate Limiting */
 app.use(
   rateLimit({
@@ -20,25 +28,72 @@ app.use(
 /* Body parsing — MUST be before routes */
 app.use(express.json());
 
-/* Routes */
-const authRoutes = require('./routes/authRoutes');
-const programRoutes = require('./routes/programRoutes');
-const inquiryRoutes = require('./routes/inquiryRoutes');
-const enrollmentRoutes = require('./routes/enrollmentRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+/* ==============================
+   Routes
+============================== */
+
+const authRoutes = require("./routes/authRoutes");
+const programRoutes = require("./routes/programRoutes");
+const inquiryRoutes = require("./routes/inquiryRoutes");
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const siteSettingsRoutes = require("./routes/siteSettingsRoutes");
 
-app.use('/api/auth', authRoutes);
-app.use('/api/programs', programRoutes);   // PUBLIC
-app.use('/api/enrollments', enrollmentRoutes);
-app.use('/api/inquiries', inquiryRoutes);  // mixed
-app.use('/api/admin', adminRoutes);
-app.use("/api/payments", paymentRoutes);
+app.use(
+  "/api/auth",
+  authRoutes
+);
 
+app.use(
+  "/api/programs",
+  programRoutes
+);
 
-/* Health check */
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', service: 'Impact You Academy API' });
-});
+app.use(
+  "/api/enrollments",
+  enrollmentRoutes
+);
+
+app.use(
+  "/api/inquiries",
+  inquiryRoutes
+);
+
+app.use(
+  "/api/admin",
+  adminRoutes
+);
+
+app.use(
+  "/api/payments",
+  paymentRoutes
+);
+
+// ==============================
+// SITE SETTINGS
+// ==============================
+
+// Public:
+// GET /api/settings/brochure
+app.use(
+  "/api/settings",
+  siteSettingsRoutes
+);
+
+/* ==============================
+   Health check
+============================== */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+    res.json({
+      status: "OK",
+      service:
+        "Impact You Academy API"
+    });
+  }
+);
 
 module.exports = app;
